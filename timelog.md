@@ -9,3 +9,7 @@
 | 2 | Sa | Week 2 lectures/activities | 2 |
 | 2 | Su | Week 2 activities and exercise | 3 |
 | 2 | W | Finalize week 2 exercise and submit | 0.5 |
+| 3 | Tu | Readings | 2 | 
+| 3 | Th | Start lectures | 1 | 
+| 3 | Su | Lectures/activities/exercise 3 | 3 | 
+| 4 | M | Finish week 3 exercise 3 | 1 |
