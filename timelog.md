@@ -15,3 +15,5 @@
 | 4 | M | Finish week 3 exercise 3 | 1 |
 | 4 | Tu | Work on Checkpoint 1 | 2 | 
 | 4 | W | Work on and submit Checkpoint 1 | 2 |
+| 4 | Th | Readings | 2 |
+| 4 | F | Lectures | 2.5 | 
