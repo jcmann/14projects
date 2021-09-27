@@ -100,16 +100,18 @@ public class Database {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connect();
             stmt = connection.createStatement();
-
-            while (true) {
-                String sql = br.readLine();
-                if (sql == null) {
-                    break;
+            String sql = "";
+            while (br.ready())
+            {
+                char inputValue = (char)br.read();
+                if(inputValue == ';')
+                {
+                    stmt.executeUpdate(sql);
+                    sql = "";
                 }
-                stmt.executeUpdate(sql);
-
+                else
+                    sql += inputValue;
             }
-
         } catch (SQLException se) {
             logger.error(se);
         } catch (Exception e) {
