@@ -34,7 +34,10 @@ MVP: As a Dungeon Master, I want to be able to create an account that saves my
 information in a database, and not just local browser storage, so my data 
 persists across long periods of time.
 
-MVP: As a Dungeon Master, I want to be able to create, modify, and delete 
+MVP: As a DM, I should be able to sign in and sign out of my account, and my data 
+should persist across these logins.
+
+MVP: As a DM, I want to be able to create, modify, and delete 
 various encounters from my saved list of encounters.
 
 MVP: As a DM, I should be able to track (add, modify, and delete) player 
