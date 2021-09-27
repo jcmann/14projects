@@ -29,7 +29,7 @@ public class CharacterList extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         CharacterDao characterDao = new CharacterDao();
-        req.setAttribute("users", characterDao.getAllCharacters());
+        req.setAttribute("characters", characterDao.getAllCharacters());
         RequestDispatcher dispatcher = req.getRequestDispatcher("/characterList.jsp");
         dispatcher.forward(req, resp);
     }
