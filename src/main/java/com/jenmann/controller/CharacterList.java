@@ -30,7 +30,7 @@ public class CharacterList extends HttpServlet {
 
         CharacterDao characterDao = new CharacterDao();
         req.setAttribute("users", characterDao.getAllCharacters());
-        RequestDispatcher dispatcher = req.getRequestDispatcher("/results.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/characterList.jsp");
         dispatcher.forward(req, resp);
     }
 }
