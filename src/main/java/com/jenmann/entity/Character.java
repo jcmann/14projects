@@ -35,6 +35,21 @@ public class Character {
     }
 
     /**
+     * Create a user without providing an ID
+     *
+     * @param name
+     * @param level
+     * @param race
+     * @param characterClass
+     */
+    public Character(String name, int level, String race, String characterClass) {
+        this.name = name;
+        this.level = level;
+        this.race = race;
+        this.characterClass = characterClass;
+    }
+
+    /**
      * Instantiates a new Character.
      *
      * @param id             the id

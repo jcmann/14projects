@@ -30,6 +30,18 @@ public class CharacterDao {
         return characters;
     }
 
+    /**
+     * Gets a character by id
+     * @param id character's id to search by
+     * @return a character
+     */
+    public Character getById(int id) {
+        Session session = sessionFactory.openSession();
+        Character character = session.get(Character.class, id);
+        session.close();
+        return character;
+    }
+
     public void saveOrUpdate(Character character) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
