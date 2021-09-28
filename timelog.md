@@ -17,3 +17,5 @@
 | 4 | W | Work on and submit Checkpoint 1 | 2 |
 | 4 | Th | Readings | 2 |
 | 4 | F | Lectures | 2.5 | 
+| 4 | Su | Exercise 4 | 2.5 | 
+| 5 | Tu | Exercise 4 | 2.5 | 
