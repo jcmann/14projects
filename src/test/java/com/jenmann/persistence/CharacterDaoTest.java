@@ -4,14 +4,17 @@ import com.jenmann.entity.Character;
 import com.jenmann.util.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CharacterDaoTest {
 
     CharacterDao dao;
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
      * Creating the dao.
@@ -58,6 +61,18 @@ public class CharacterDaoTest {
         Character resultingCharacter = dao.getById(1);
         assertEquals(newLevel, resultingCharacter.getLevel());
 
+    }
+
+    /**
+     * Confirms that a character entry can be deleted
+     */
+    @Test
+    public void deleteCharacterSuccess() {
+        int idToDelete = 1;
+        Character charToDelete = dao.getById(idToDelete);
+        dao.delete(charToDelete);
+
+        assertNull(dao.getById(idToDelete));
     }
 
 }
