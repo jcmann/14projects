@@ -45,4 +45,19 @@ public class CharacterDaoTest {
         assertEquals("Mozzy", insertedChar.getName());
     }
 
+    /**
+     * Confirms that a character entry can be updated
+     */
+    @Test
+    public void updateCharacterSuccess() {
+        int newLevel = 10;
+        Character charToUpdate = dao.getById(1);
+        charToUpdate.setLevel(newLevel);
+        dao.saveOrUpdate(charToUpdate);
+
+        Character resultingCharacter = dao.getById(1);
+        assertEquals(newLevel, resultingCharacter.getLevel());
+
+    }
+
 }
