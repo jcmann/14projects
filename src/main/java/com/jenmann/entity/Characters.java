@@ -28,7 +28,6 @@ public class Characters {
     @Column(name = "character_class")
     private String characterClass;
 
-    @Column(name = "user_id")
     @ManyToOne
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "user_id")
