@@ -1,6 +1,6 @@
 package com.jenmann.controller;
 
-import com.jenmann.persistence.CharacterDao;
+import com.jenmann.persistence.CharactersDao;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -28,7 +28,7 @@ public class CharacterList extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        CharacterDao characterDao = new CharacterDao();
+        CharactersDao characterDao = new CharactersDao();
         req.setAttribute("characters", characterDao.getAllCharacters());
         RequestDispatcher dispatcher = req.getRequestDispatcher("/characterList.jsp");
         dispatcher.forward(req, resp);

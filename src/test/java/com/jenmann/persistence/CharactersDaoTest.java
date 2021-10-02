@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class CharacterDaoTest {
+public class CharactersDaoTest {
 
     CharactersDao dao;
     private final Logger logger = LogManager.getLogger(this.getClass());

@@ -28,6 +28,13 @@ public class Characters {
     @Column(name = "character_class")
     private String characterClass;
 
+    @Column(name = "userId")
+    @ManyToOne
+    @JoinColumn(name = "userId",
+            foreignKey = @ForeignKey(name = "userId")
+    )
+    private User user;
+
     /**
      * Instantiates a new Character.
      */

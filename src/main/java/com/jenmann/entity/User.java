@@ -28,7 +28,8 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    private List<Characters> characterList = new ArrayList<Characters>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Characters> charactersList = new ArrayList<>();
 
     /**
      * Instantiates a new User.
