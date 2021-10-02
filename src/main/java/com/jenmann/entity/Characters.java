@@ -28,10 +28,10 @@ public class Characters {
     @Column(name = "character_class")
     private String characterClass;
 
-    @Column(name = "userId")
+    @Column(name = "user_id")
     @ManyToOne
-    @JoinColumn(name = "userId",
-            foreignKey = @ForeignKey(name = "userId")
+    @JoinColumn(name = "user_id",
+            foreignKey = @ForeignKey(name = "user_id")
     )
     private User user;
 
@@ -71,6 +71,23 @@ public class Characters {
         this.level = level;
         this.race = race;
         this.characterClass = characterClass;
+    }
+
+    /**
+     * Instantiates a new Character.
+     *
+     * @param name           the name
+     * @param level          the level
+     * @param race           the race
+     * @param characterClass the character class
+     * @param user           the user this character belongs to
+     */
+    public Characters(String name, int level, String race, String characterClass, User user) {
+        this.name = name;
+        this.level = level;
+        this.race = race;
+        this.characterClass = characterClass;
+        this.user = user;
     }
 
     /**

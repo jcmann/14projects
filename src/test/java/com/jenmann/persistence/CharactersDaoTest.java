@@ -1,6 +1,7 @@
 package com.jenmann.persistence;
 
 import com.jenmann.entity.Characters;
+import com.jenmann.entity.User;
 import com.jenmann.util.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,11 @@ public class CharactersDaoTest {
      */
     @Test
     public void insertNewCharacterSuccess() {
-        Characters newChar = new Characters("Mozzy", 5, "Doggo", "Paladin");
+        // Get user
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(1);
+
+        Characters newChar = new Characters("Mozzy", 5, "Doggo", "Paladin", user);
         int id = dao.insert(newChar);
         assertNotEquals(0,id);
         Characters insertedChar = dao.getById(id);
