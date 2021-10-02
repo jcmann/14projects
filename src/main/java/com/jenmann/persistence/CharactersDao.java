@@ -1,6 +1,6 @@
 package com.jenmann.persistence;
 
-import com.jenmann.entity.Character;
+import com.jenmann.entity.Characters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -13,18 +13,18 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
-public class CharacterDao {
+public class CharactersDao {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
     SessionFactory sessionFactory = SessionFactoryProvider.getSessionFactory();
 
-    public List<Character> getAllCharacters() {
+    public List<Characters> getAllCharacters() {
         logger.info("Getting all characters...");
         Session session = sessionFactory.openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<Character> query = builder.createQuery(Character.class);
-        Root<Character> root = query.from(Character.class);
-        List<Character> characters = session.createQuery(query).getResultList();
+        CriteriaQuery<Characters> query = builder.createQuery(Characters.class);
+        Root<Characters> root = query.from(Characters.class);
+        List<Characters> characters = session.createQuery(query).getResultList();
         session.close();
         logger.info("Returning all characters.");
         return characters;
@@ -35,14 +35,14 @@ public class CharacterDao {
      * @param id character's id to search by
      * @return a character
      */
-    public Character getById(int id) {
+    public Characters getById(int id) {
         Session session = sessionFactory.openSession();
-        Character character = session.get(Character.class, id);
+        Characters character = session.get(Characters.class, id);
         session.close();
         return character;
     }
 
-    public void saveOrUpdate(Character character) {
+    public void saveOrUpdate(Characters character) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         session.saveOrUpdate(character);
@@ -50,7 +50,7 @@ public class CharacterDao {
         session.close();
     }
 
-    public int insert(Character character) {
+    public int insert(Characters character) {
         int id = 0;
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -60,7 +60,7 @@ public class CharacterDao {
         return id;
     }
 
-    public void delete(Character character) {
+    public void delete(Characters character) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
         session.delete(character);

@@ -7,9 +7,9 @@ import javax.persistence.*;
 /**
  * The type Character.
  */
-@Entity(name = "Character")
+@Entity(name = "Characters")
 @Table(name = "characters")
-public class Character {
+public class Characters {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -31,7 +31,7 @@ public class Character {
     /**
      * Instantiates a new Character.
      */
-    public Character() {
+    public Characters() {
     }
 
     /**
@@ -42,7 +42,7 @@ public class Character {
      * @param race
      * @param characterClass
      */
-    public Character(String name, int level, String race, String characterClass) {
+    public Characters(String name, int level, String race, String characterClass) {
         this.name = name;
         this.level = level;
         this.race = race;
@@ -58,7 +58,7 @@ public class Character {
      * @param race           the race
      * @param characterClass the character class
      */
-    public Character(int id, String name, int level, String race, String characterClass) {
+    public Characters(int id, String name, int level, String race, String characterClass) {
         this.id = id;
         this.name = name;
         this.level = level;

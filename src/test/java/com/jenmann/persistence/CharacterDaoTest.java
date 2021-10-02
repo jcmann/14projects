@@ -1,6 +1,6 @@
 package com.jenmann.persistence;
 
-import com.jenmann.entity.Character;
+import com.jenmann.entity.Characters;
 import com.jenmann.util.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class CharacterDaoTest {
 
-    CharacterDao dao;
+    CharactersDao dao;
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
@@ -21,7 +21,7 @@ public class CharacterDaoTest {
      */
     @BeforeEach
     void setUp() {
-        dao = new CharacterDao();
+        dao = new CharactersDao();
 
         Database database = Database.getInstance();
         database.runSQL("cleandb.sql");
@@ -32,7 +32,7 @@ public class CharacterDaoTest {
      */
     @Test
     public void getAllCharactersSuccess() {
-        List<Character> characters = dao.getAllCharacters();
+        List<Characters> characters = dao.getAllCharacters();
         assertEquals(3, characters.size());
     }
 
@@ -41,10 +41,10 @@ public class CharacterDaoTest {
      */
     @Test
     public void insertNewCharacterSuccess() {
-        Character newChar = new Character("Mozzy", 5, "Doggo", "Paladin");
+        Characters newChar = new Characters("Mozzy", 5, "Doggo", "Paladin");
         int id = dao.insert(newChar);
         assertNotEquals(0,id);
-        Character insertedChar = dao.getById(id);
+        Characters insertedChar = dao.getById(id);
         assertEquals("Mozzy", insertedChar.getName());
     }
 
@@ -54,11 +54,11 @@ public class CharacterDaoTest {
     @Test
     public void updateCharacterSuccess() {
         int newLevel = 10;
-        Character charToUpdate = dao.getById(1);
+        Characters charToUpdate = dao.getById(1);
         charToUpdate.setLevel(newLevel);
         dao.saveOrUpdate(charToUpdate);
 
-        Character resultingCharacter = dao.getById(1);
+        Characters resultingCharacter = dao.getById(1);
         assertEquals(newLevel, resultingCharacter.getLevel());
 
     }
@@ -69,7 +69,7 @@ public class CharacterDaoTest {
     @Test
     public void deleteCharacterSuccess() {
         int idToDelete = 1;
-        Character charToDelete = dao.getById(idToDelete);
+        Characters charToDelete = dao.getById(idToDelete);
         dao.delete(charToDelete);
 
         assertNull(dao.getById(idToDelete));

@@ -3,6 +3,10 @@ package com.jenmann.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.ArrayList;
+
+import com.jenmann.entity.Characters;
 
 /**
  * The type User.
@@ -23,6 +27,8 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    private List<Characters> characterList = new ArrayList<Characters>();
 
     /**
      * Instantiates a new User.
