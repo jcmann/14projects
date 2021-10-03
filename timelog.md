@@ -19,3 +19,7 @@
 | 4 | F | Lectures | 2.5 | 
 | 4 | Su | Exercise 4 | 2.5 | 
 | 5 | Tu | Exercise 4 | 2.5 | 
+| 5 | Tu | Readings and start lecture | 2.5 | 
+| 5 | Th | Lecture | 2 |
+| 5 | F | Exercise 5 | 1.5 | 
+| 5 | Sa | Exercise 5 | 2.5 |
