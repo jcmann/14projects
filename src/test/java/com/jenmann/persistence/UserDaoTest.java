@@ -51,10 +51,10 @@ public class UserDaoTest {
     }
 
     /**
-     * Confirms that a character entry can be updated
+     * Confirms that a user entry can be updated
      */
     @Test
-    public void updateCharacterSuccess() {
+    public void updateUserSuccess() {
         String newPassword = "newPassword";
         User userToUpdate = dao.getById(1);
         userToUpdate.setPassword(newPassword);
@@ -62,19 +62,43 @@ public class UserDaoTest {
 
         User resultingUser = dao.getById(1);
         assertEquals(newPassword, resultingUser.getPassword());
-
     }
 
     /**
-     * Confirms that a character entry can be deleted
+     * Confirms that a user entry can be deleted
      */
     @Test
-    public void deleteCharacterSuccess() {
-        int idToDelete = 1;
+    public void deleteUserWithoutCharactersSuccess() {
+        int idToDelete = 2;
         User userToDelete = dao.getById(idToDelete);
         dao.delete(userToDelete);
 
         assertNull(dao.getById(idToDelete));
+    }
+
+    /**
+     * Confirms that a user with corresponding entries
+     * in the characters table can be deleted, and that
+     * all character entries are also deleted
+     */
+    @Test
+    public void deleteUserWithCharactersSuccess() {
+        int idToDelete = 3;
+        User userToDelete = dao.getById(idToDelete);
+
+        // Confirm characters exist belonging to this user
+        CharactersDao charDao = new CharactersDao();
+        List<Characters> characters = charDao.getByUser(userToDelete);
+        assertEquals(1, characters.size());
+
+        // Delete the user
+        dao.delete(userToDelete);
+        assertNull(dao.getById(idToDelete));
+
+        // Confirm characters were also deleted
+        List<Characters> charactersAfterDeletion = charDao.getByUser(userToDelete);
+        System.out.println(charactersAfterDeletion);
+        assertEquals(0, charactersAfterDeletion.size());
     }
 
 }
