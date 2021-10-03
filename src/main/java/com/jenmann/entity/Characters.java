@@ -178,4 +178,21 @@ public class Characters {
     public void setCharacterClass(String characterClass) {
         this.characterClass = characterClass;
     }
+
+    /**
+     * Gets the user to whom these characters belong
+     *
+     * @return the user
+     */
+    public User getUser() {
+        return user;
+    }
+    /**
+     * Gets the user to whom these characters belong
+     *
+     * @return the user
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

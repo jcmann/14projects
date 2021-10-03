@@ -1,6 +1,7 @@
 package com.jenmann.persistence;
 
 import com.jenmann.entity.Characters;
+import com.jenmann.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -40,6 +41,35 @@ public class CharactersDao {
         Characters character = session.get(Characters.class, id);
         session.close();
         return character;
+    }
+
+    /**
+     * Gets a character by id
+     * @param userId user ID to search by
+     * @return a list of characters
+     */
+    public List<Characters> getByUserId(int userId) {
+        Session session = sessionFactory.openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Characters> query = builder.createQuery(Characters.class);
+        Root<Characters> root = query.from(Characters.class);
+        query.select(root).where(builder.equal(root.get("user_id"), userId));
+        List<Characters> characters = session.createQuery(query).getResultList();
+        session.close();
+
+        return characters;
+    }
+
+    public List<Characters> getByUser(User user) {
+        Session session = sessionFactory.openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Characters> query = builder.createQuery(Characters.class);
+        Root<Characters> root = query.from(Characters.class);
+        query.select(root).where(builder.equal(root.get("user"), user));
+        List<Characters> characters = session.createQuery(query).getResultList();
+        session.close();
+
+        return characters;
     }
 
     public void saveOrUpdate(Characters character) {

@@ -38,6 +38,21 @@ public class CharactersDaoTest {
     }
 
     /**
+     * Confirms that you can search by the user who the characters belong to
+     */
+    @Test
+    public void getCharactersByUserId() {
+        int userId = 1;
+        UserDao userDao = new UserDao();
+        User user = userDao.getById(1);
+
+        List<Characters> chars = dao.getByUser(user);
+
+        assertEquals(2, chars.size());
+
+    }
+
+    /**
      * Confirms that new characters are properly inserted into the table
      */
     @Test
