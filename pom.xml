@@ -91,7 +91,7 @@
   </dependencies>
 
   <build>
-    <finalName>14projects</finalName>
+    <finalName>dmbook</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
