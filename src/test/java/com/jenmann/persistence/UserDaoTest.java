@@ -22,6 +22,7 @@ public class UserDaoTest {
      */
     @BeforeEach
     void setUp() {
+        logger.info("Starting new UserDao Test.");
         dao = new UserDao();
 
         Database database = Database.getInstance();
@@ -33,6 +34,7 @@ public class UserDaoTest {
      */
     @Test
     public void getAllUsersSuccess() {
+        logger.info("In test: getAllUsersSuccess.");
         List<User> users = dao.getAllUsers();
         assertEquals(3, users.size());
     }
@@ -42,7 +44,7 @@ public class UserDaoTest {
      */
     @Test
     public void insertNewUserSuccess() {
-
+        logger.info("In test: InsertNewUserSuccess.");
         User newUser = new User("user4", "pass4");
         int id = dao.insert(newUser);
         assertNotEquals(0,id);
@@ -55,6 +57,7 @@ public class UserDaoTest {
      */
     @Test
     public void updateUserSuccess() {
+        logger.info("In test: updateUserSuccess.");
         String newPassword = "newPassword";
         User userToUpdate = dao.getById(1);
         userToUpdate.setPassword(newPassword);
@@ -69,6 +72,7 @@ public class UserDaoTest {
      */
     @Test
     public void deleteUserWithoutCharactersSuccess() {
+        logger.info("In test: deleteUserWithoutCharactersSuccess.");
         int idToDelete = 2;
         User userToDelete = dao.getById(idToDelete);
         dao.delete(userToDelete);
@@ -83,6 +87,7 @@ public class UserDaoTest {
      */
     @Test
     public void deleteUserWithCharactersSuccess() {
+        logger.info("In test: deleteUserWithCharactersSuccess.");
         int idToDelete = 3;
         User userToDelete = dao.getById(idToDelete);
 

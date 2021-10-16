@@ -22,6 +22,7 @@ public class CharactersDaoTest {
      */
     @BeforeEach
     void setUp() {
+        logger.info("Starting new CharactersDao Test.");
         dao = new CharactersDao();
 
         Database database = Database.getInstance();
@@ -33,6 +34,7 @@ public class CharactersDaoTest {
      */
     @Test
     public void getAllCharactersSuccess() {
+        logger.info("In test: getAllCharactersSuccess.");
         List<Characters> characters = dao.getAllCharacters();
         assertEquals(3, characters.size());
     }
@@ -42,6 +44,7 @@ public class CharactersDaoTest {
      */
     @Test
     public void getCharactersByUserId() {
+        logger.info("In test: getCharactersByUserId.");
         int userId = 1;
         UserDao userDao = new UserDao();
         User user = userDao.getById(1);
@@ -57,6 +60,7 @@ public class CharactersDaoTest {
      */
     @Test
     public void insertNewCharacterSuccess() {
+        logger.info("In test: insertNewCharacterSuccess.");
         // Get user
         UserDao userDao = new UserDao();
         User user = userDao.getById(1);
@@ -73,6 +77,7 @@ public class CharactersDaoTest {
      */
     @Test
     public void updateCharacterSuccess() {
+        logger.info("In test: updateCharacterSuccess.");
         int newLevel = 10;
         Characters charToUpdate = dao.getById(1);
         charToUpdate.setLevel(newLevel);
@@ -88,6 +93,7 @@ public class CharactersDaoTest {
      */
     @Test
     public void deleteCharacterSuccess() {
+        logger.info("In test: deleteCharacterSuccess.");
         int idToDelete = 1;
         Characters charToDelete = dao.getById(idToDelete);
         dao.delete(charToDelete);
