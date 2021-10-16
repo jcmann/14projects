@@ -97,7 +97,6 @@ public class UserDaoTest {
 
         // Confirm characters were also deleted
         List<Characters> charactersAfterDeletion = charDao.getByUser(userToDelete);
-        System.out.println(charactersAfterDeletion);
         assertEquals(0, charactersAfterDeletion.size());
     }
 
