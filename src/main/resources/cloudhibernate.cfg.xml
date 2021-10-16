@@ -1,7 +1,8 @@
 <hibernate-configuration>
     <session-factory>
-        <property name="connection.url">jdbc:mysql://aa7hzojdb4g4ga.cyeexwigxwod.us-east-2.rds.amazonaws
-            .com:3306/dmbook</property>
+        <property name="connection.url">
+            jdbc:mysql://aa1b4cvt9ifz8f3.cyeexwigxwod.us-east-2.rds.amazonaws.com:3306/dmbook
+        </property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="connection.username">student</property>
         <property name="connection.password">studentRigs</property>
