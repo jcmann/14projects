@@ -23,3 +23,9 @@
 | 5 | Th | Lecture | 2 |
 | 5 | F | Exercise 5 | 1.5 | 
 | 5 | Sa | Exercise 5 | 2.5 |
+| 6 | Tu | Lectures and content for week 6 | 2 |
+| 6 | W | Work on deploying to AWS | 3 | 
+| 6 | W | Continue troubleshooting AWS deploy | 4 | 
+| 7 | W | Week 7 class content (lectures, etc.) | 1 | 
+| 7 | Th | Look into using Cognito with a React project | 1 | 
+| 7 | Sa | Finalize checkpoint 2 | 1 | 
