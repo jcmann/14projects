@@ -2,123 +2,99 @@
 
 ## Problem Statement
 
-Dungeons and Dragons (DND) is a longstanding and increasingly popular tabletop 
-roleplaying game. Currently on its 5th edition (aka “5e”), it has an expansive 
-world filled with monsters and magic. The game consists of a handful of players 
-(usually 3-5) and a dungeon master (DM). Players make characters and are the 
-ones actually roleplaying. The DM is the one who’s building the game world, 
-playing NPCs and enemies, and generally guiding the players. 
+Dungeons and Dragons (DND) is a longstanding and increasingly popular tabletop
+roleplaying game. Currently on its 5th edition (aka “5e”), it has an expansive
+world filled with monsters and magic. The game consists of a handful of players
+(usually 3-5) and a dungeon master (DM). Players make characters and are the
+ones actually roleplaying. The DM is the one who’s building the game world,
+playing NPCs and enemies, and generally guiding the players.
 The DM effectively is the computer, and naturally, being the computer is a lot of work!
 
-Finding a DM is often difficult for players, much less finding a good one. 
-Game sessions themselves often last somewhere around three hours. 
-DMs are also responsible for prepping the story world for the next session, 
-which can also take a couple hours. They may be writing the story themself, 
+Finding a DM is often difficult for players, much less finding a good one.
+Game sessions themselves often last somewhere around three hours.
+DMs are also responsible for prepping the story world for the next session,
+which can also take a couple hours. They may be writing the story,
 or they have have to organize prewritten materials.
 
-There are a variety of tools DMs use to keep themselves organized and to get 
-their jobs done. Many use notebooks, but there are also various online tools 
-like D&D Beyond, encounter builders, map creator tools, campaign wiki creators, etc.. 
-D&D Beyond is great but has some weird limitations around paywall. 
-I’m not really trying to reinvent the wheel with this project as much as I want 
+There are a variety of tools DMs use to keep themselves organized and to get
+their jobs done. Many use notebooks, but there are also various online tools
+like D&D Beyond, encounter builders, map creator tools, campaign wiki creators, etc..
+D&D Beyond is great but has some weird limitations around paywall.
+I’m not really trying to reinvent the wheel with this project as much as I want
 to make my own spin on encounter builders and campaign tools.
 
-Overall, I want to focus on creating tooling that helps DMs during encounters 
-especially, but that can also help just during regular non-combat gameplay. 
-All of this revolves around information tracking and display and I believe the 
-most important part is a good UI. 
+Overall, I want to focus on creating tooling that helps DMs during encounters
+especially, but that can also help just during regular non-combat gameplay.
+All of this revolves around information tracking and display and I believe the
+most important part is a good UI.
 
 ## User Stories
 
-MVP: As a Dungeon Master, I want to be able to create an account that saves my 
-information in a database, and not just local browser storage, so my data 
-persists across long periods of time.
+### Minimum Viable Product
 
-MVP: As a DM, I should be able to sign in and sign out of my account, and my data 
-should persist across these logins.
+- [ ] As a Dungeon Master, I want to be able to create an account that saves my information in a database, and not just local browser storage, so my data persists across logins.
+- [ ] As a DM, I should be able to sign in and sign out of my account, and my data
+      should persist across these logins.
+- [ ] As a DM, I want to be able to create, modify, and delete
+      various encounters from my saved list of encounters.
+- [ ] As a DM writing an encounter, I should be able to add characters and monsters to the encounter so that I can track the difficulty of said encounter.
+- [ ] As a DM writing an encounter, I should be able to calculate the difficulty rating of an encounter based on character and monster levels.
+- [ ] As a DM writing an encounter, I should be able to write a long text description of the encounter so I can store all the information that doesn't conveniently boil down into characters and monsters.
+- [ ] As a DM, I should be able to track (add, modify, and delete) player characters. Specifically, I need their current health, armor class, primary stats, and hit dice.
 
-MVP: As a DM, I want to be able to create, modify, and delete 
-various encounters from my saved list of encounters.
+### Stretch Goals
 
-MVP: As a DM, I should be able to track (add, modify, and delete) player 
-characters to encounters. Specifically, I need to track their current health, 
-armor class, primary stats, and hit dice.
+- [ ] As a DM, I would like to be able to see the current health of both characters and monsters in an encounter so it's easier for me to keep track of.
+- [ ] As a DM, I would like to be able to easily see expanded stats for monsters in an encounter such as: AC, stats, hit dice, attacks, or vulnerabilities.
+- [ ] As a DM, I would like to be able to click on a monster in an encounter and see an expanded view of their full monster page.
+- [ ] As a DM, I should be able to roll any die in the standard DND gaming set from any screen.
+- [ ] As a DM, I want to be able to add custom monsters to the monster roster that can be added to encounters just like monsters that come from the API, so I'm not as restricted creatively.
 
-MVP: As a DM, I should be able to track enemies in the encounters as well. 
-At a quick glance, I need to see their health, AC, stats, hit dice, 
-vulnerabilities, and attacks. I should be able to expand this view to see 
-their full monster page.
+### Dev-related Stretch Goals
 
-As a DM, I should be able to roll any die in the standard dice set on any screen.
-
-As a DM, I want to be able to add custom monsters to the monster roster that 
-can be added to encounters like official monsters. 
+- [ ] Fix Amplify/Redux so the Redux Toolkit reducer does not manually reload the page for changes in login status to take effect
 
 ## Project Plan
 
-I have two different ideas for the project, which I'd like some insight on to decide between!
+### Technologies
 
-### General Info
+- Frontend: React with Redux Toolkit
+- Backend: Maven structured as an API (Java project)
 
-The DND API would provide data about classes and races, as well as a list of monsters
-that the user could scroll through. The project is intended to be a supplemental
-tool, not one that would replace the physical books. The information
-I'm hoping to display will be what DMs might need to glance at to keep game flow going.
+### Database Tables
 
-Database Tables
-* Users
-* Characters
-* Encounters
-* UsersCharacters
-* UsersEncounters
-* CharactersEncounters
+- Users
+- Characters
+- Encounters
+- Characters_Encounters
 
-### Route 1: All Java (Servlets, JSPs)
+### Technological Overview
 
-(Disclaimer: I think that this is technically more in line with the project requirements)
+The backend will be structured as an API with endpoints representing the above tables, as well as endpoints representing endpoints from the external API (the DND API) that the app will use: namely, monsters and some character data.
 
-The servlets would handle not only the database requests, but also any contact
-with the API.
+#### **"Middleman" endpoints**
 
-Week 4: Checkpoint 1
-Week 5: Design database + DAO
-Week 6: Work on design feedback and build homepage
-Week 7: Add authentication (and enough to log in)
-Week 8: Work on deploying to AWS and checkpoint 3
-Week 9 onwards: General work continuing
+The application will use data from the DND API to perform calculations, and provide the user with a list of monsters they can add to an encounter.
 
-### Route 2: Java backend, React frontend
+The DND API will provide data about classes, races, and monsters that the user can use while building encounters. Rather than the React frontend interacting with this API directly, it will send a request to our Java/Maven backend, which will then send the request to the DND API.
 
-I think this kind of also is a win for the rubric because it would definitely 
-count as using a complex other technology! But, if I did this I’d need some 
-guidance on how to best do this because it’d kind of be two codebases.
+#### **Regular endpoints**
 
-I would imagine basically writing two project directories, one just for the Java 
-side and having all the React files live in their own directory. I’m not really 
-sure how it would work to have the Java project also serve up the entire React project.
+The React frontend will also send more standard requests to our backend that will get app-specific data about users, characters, and encounters.
 
-The Java code would then be structured sort of as both its own API and a sort of
-middleware. It would handle all the data that would be stored in the database 
-(user info, saved encounters, saved characters, custom monsters). 
-I feel like it would also need to be what makes the requests to the API, 
-rather than that coming directly from the frontend -- i.e., the frontend would 
-make a request to my Java project which would then make the request to the DND API.
+The User endpoint will be used to verify that the user making the request is valid, as authentication is handled in the frontend using AWS Amplify, and will also associate validated users to character and encounter data. Currently, I anticipate storing user-related data in Redux state.
 
-While I use React at work, we have so many of our own structures that a lot of 
-just the regular React/Redux/etc is abstracted away pretty heavily. It would 
-take me quite a bit of time to really figure out exactly what line of code fires
-off actual requests, because we don’t just use simple Fetch.
+- 1 User: Many Characters
+- 1 User: Many Encounters
 
-I’ll be working on a Udemy class to learn the React side of things.
+The Characters endpoint will be used to request data for characters belonging to that user, to be displayed and interacted with in the React frontend.
 
-Week 4: Checkpoint 1, start React studying
-Week 5: Design database + DAO
-Week 6: Work on design + start building homepage
-Week 7: Start building authentication
-Week 8: Start working on deploying to AWS/Checkpoint 3
-Week 9: Checkpoint 3, continue working on frontend
-Week 10:
-Goal: Have frontend built but not connected to anything
-Start applying REST to Java project
-Week 11-13: Have endpoints/backend mostly working
-Week 13-16: Connect frontend to backend (gives me time to work on async React/etc.)
+The Encounters endpoint will be used similarly.
+
+### Rough Schedule Estimate
+
+In addition to following exercise and checkpoint goals:
+
+- Week 10: Have frontend at least mostly built, but not connected to any backend, study React, Redux Toolkit, especially asynchronous usages
+- Week 11-13: Have endpoints/backend mostly working
+- Week 13-16: Connect frontend to backend
