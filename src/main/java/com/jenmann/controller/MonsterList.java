@@ -1,0 +1,39 @@
+package com.jenmann.controller;
+
+import com.jenmann.entity.GetAllResponse;
+import com.jenmann.persistence.MonsterDao;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.annotation.*;
+import java.io.IOException;
+
+/**
+ * A servlet to handle CRUD for the character list.
+ * For exercise 4, intended to also forward to a JSP to display said results/searches.
+ *
+ * In final project, this will not return a JSP but just data.
+ *
+ * @author jcmann
+ */
+
+@WebServlet(
+        urlPatterns = {"/monsters"}
+)
+
+public class MonsterList extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        MonsterDao monsterDao = new MonsterDao();
+        GetAllResponse gar = monsterDao.getAllMonsters();
+        req.setAttribute("monstersCount", gar.getCount());
+        req.setAttribute("monstersResults", gar.getResults());
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/monstersList.jsp");
+        dispatcher.forward(req, resp);
+    }
+}
