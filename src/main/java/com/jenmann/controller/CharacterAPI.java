@@ -44,6 +44,12 @@ public class CharacterAPI {
 
     }
 
+    /**
+     * Using a passed-in ID parameter, returns the character that matches that ID.
+     *
+     * @param id ID for the intended character
+     * @return a JSON object representing that character
+     */
     @GET
     @Path("{id}")
     @Produces("application/json")
