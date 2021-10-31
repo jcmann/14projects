@@ -38,9 +38,7 @@ public class MonsterDao {
         GetAllResponse gar = new GetAllResponse();
 
         try {
-            logger.debug("++++++++++++++++++++++++++++++++++++++++++++++");
             gar = mapper.readValue(response, GetAllResponse.class);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,6 +46,29 @@ public class MonsterDao {
         return gar;
     }
 
+    /**
+     *
+     * @param index The index, formatted for the API in lower kebab case
+     * @return a Monster representing the data returned from the API
+     */
+    public Monster getMonsterByIndex(String index) {
+        logger.info("Getting monster with the index: " + index );
+        Client client = ClientBuilder.newClient();
+        WebTarget target =
+                client.target("https://www.dnd5eapi.co/api/monsters/" + index);
+        String response = target.request(MediaType.APPLICATION_JSON).get(String.class);
 
+        ObjectMapper mapper = new ObjectMapper();
+        Monster monster = new Monster();
+
+        try {
+            monster = mapper.readValue(response, Monster.class);
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+        }
+
+        return monster;
+
+    }
 
 }

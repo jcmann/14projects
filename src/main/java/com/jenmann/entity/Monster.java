@@ -1,7 +1,9 @@
 package com.jenmann.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Monster {
 
     @JsonProperty("index")
@@ -81,3 +83,8 @@ public class Monster {
         this.hitDice = hitDice;
     }
 }
+
+/**
+ * Helpful code sources:
+ * https://stackoverflow.com/questions/63488348/jackson-json-only-convert-selected-fields-and-methods
+ */

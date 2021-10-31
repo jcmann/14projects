@@ -61,6 +61,20 @@ public class MonsterAPI {
 
     }
 
+    @GET
+    @Path("{index}")
+    @Produces("application/json")
+    public Response getMonsterByIndex(@PathParam("index") String index) {
+        Monster monster = getDao().getMonsterByIndex(index);
+        String responseJSON = "";
+        try {
+            responseJSON = getObjectMapper().writeValueAsString(monster);
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+        }
+        return Response.status(200).entity(responseJSON).build();
+    }
+
     /**
      * Returns the instance variable for the monster DAO.
      *
