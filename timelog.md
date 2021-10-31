@@ -35,3 +35,6 @@
 | 8    | F   | Continue debugging AWS Amplify with React                                | 1.5   |
 | 8    | Sa  | Continue debugging AWS Amplify with React                                | 1     |
 | 8    | Su  | Exercise 7 finalized, checkpoint 2 revisions                             | 2.5   |
+| 9    | Tu  | Lectures and course materials                                            | 2     | 
+| 9    | Th  | Activity and working on exercise 8                                       | 2     | 
+| 9    | Sa  | Exercise 9                                                               | 2     | 
