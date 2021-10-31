@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Characters;
+import com.jenmann.entity.GetAllResponse;
 import com.jenmann.entity.Monster;
 import com.jenmann.persistence.CharactersDao;
 import com.jenmann.persistence.MonsterDao;
@@ -38,6 +39,27 @@ public class MonsterAPI {
      * Log4J2 instance for all logging.
      */
     private final Logger logger = LogManager.getLogger(this.getClass());
+
+    /**
+     * Sends a response containing a JSON array of all monsters provided by the 5e API
+     *
+     * @return all characters, sent as a JSON array
+     */
+    @GET
+    @Produces("application/json")
+    public Response getAllMonsters() {
+        GetAllResponse allMonsters = getDao().getAllMonsters();
+        String responseJSON = "";
+
+        try {
+            responseJSON = getObjectMapper().writeValueAsString(allMonsters.getResults());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+        }
+
+        return Response.status(200).entity(responseJSON).build();
+
+    }
 
     /**
      * Returns the instance variable for the monster DAO.
