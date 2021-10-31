@@ -20,6 +20,9 @@ import java.util.List;
 @Path("/characters")
 public class CharacterAPI {
 
+    private CharactersDao dao = new CharactersDao();
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     /**
      * Sends a response containing a JSON array of all characters stored in DMBook currently.
      *
@@ -28,18 +31,42 @@ public class CharacterAPI {
     @GET
     @Produces("application/json")
     public Response getAllCharacters() {
-        CharactersDao characterDao = new CharactersDao();
-        List<Characters> allCharacters = characterDao.getAllCharacters();
-        ObjectMapper mapper = new ObjectMapper();
+        List<Characters> allCharacters = getDao().getAllCharacters();
         String responseJSON = "";
 
         try {
-            responseJSON = mapper.writeValueAsString(allCharacters);
+            responseJSON = getObjectMapper().writeValueAsString(allCharacters);
         } catch (Exception e) {
             // TODO logger
         }
 
         return Response.status(200).entity(responseJSON).build();
 
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces("application/json")
+    public Response getCharacterByID(@PathParam("id") int id) {
+
+        Characters character = getDao().getById(id);
+        String responseJSON = "";
+
+        try {
+            responseJSON = getObjectMapper().writeValueAsString(character);
+        } catch (Exception e) {
+            // TODO logger
+        }
+
+        return Response.status(200).entity(responseJSON).build();
+
+    }
+
+    public CharactersDao getDao() {
+        return dao;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 }
