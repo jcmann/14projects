@@ -8,6 +8,8 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Characters;
 import com.jenmann.persistence.CharactersDao;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class CharacterAPI {
 
     private CharactersDao dao = new CharactersDao();
     private ObjectMapper objectMapper = new ObjectMapper();
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
      * Sends a response containing a JSON array of all characters stored in DMBook currently.
@@ -37,7 +40,7 @@ public class CharacterAPI {
         try {
             responseJSON = getObjectMapper().writeValueAsString(allCharacters);
         } catch (Exception e) {
-            // TODO logger
+            logger.error(e.getStackTrace());
         }
 
         return Response.status(200).entity(responseJSON).build();
@@ -61,7 +64,7 @@ public class CharacterAPI {
         try {
             responseJSON = getObjectMapper().writeValueAsString(character);
         } catch (Exception e) {
-            // TODO logger
+            logger.error(e.getStackTrace());
         }
 
         return Response.status(200).entity(responseJSON).build();
