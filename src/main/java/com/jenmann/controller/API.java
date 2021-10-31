@@ -22,6 +22,7 @@ public class API extends Application {
     public Set<Class<?>> getClasses() {
         HashSet h = new HashSet<Class<?>>();
         h.add(CharacterAPI.class);
+        h.add(MonsterAPI.class);
         return h;
     }
 
