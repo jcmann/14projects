@@ -11,9 +11,20 @@ import com.jenmann.persistence.CharactersDao;
 
 import java.util.List;
 
+/**
+ * This endpoint is responsible for handling all data related to characters
+ * for DMBook.
+ *
+ * @author jcmann
+ */
 @Path("/characters")
 public class CharacterAPI {
 
+    /**
+     * Sends a response containing a JSON array of all characters stored in DMBook currently.
+     *
+     * @return all characters, sent as a JSON array
+     */
     @GET
     @Produces("application/json")
     public Response getAllCharacters() {
