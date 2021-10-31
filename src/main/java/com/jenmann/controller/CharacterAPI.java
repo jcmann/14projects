@@ -22,8 +22,19 @@ import java.util.List;
 @Path("/characters")
 public class CharacterAPI {
 
+    /**
+     * Represents and handles the database connectivity for all Characters-related data
+     */
     private CharactersDao dao = new CharactersDao();
+
+    /**
+     * A utility object, used for mapping POJOs to JSON strings here.
+     */
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Log4J2 instance for all logging.
+     */
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
@@ -71,10 +82,20 @@ public class CharacterAPI {
 
     }
 
+    /**
+     * Returns the instance variable for the character DAO.
+     *
+     * @return charactersDao instance variable for database work
+     */
     public CharactersDao getDao() {
         return dao;
     }
 
+    /**
+     * Returns the objectMapper instance variable for converting POJOs to JSON.
+     *
+     * @return an ObjectMapper
+     */
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
