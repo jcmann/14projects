@@ -39,3 +39,4 @@
 | 9    | Th  | Activity and working on exercise 8                                       | 2     | 
 | 9    | Sa  | Exercise 9                                                               | 2     | 
 | 9    | Sa  | Continue developing DMBook API endpoints (Monsters, Characters)          | 1.5   | 
+| 10   | Tu  | Frontend work                                                            | 2     |
