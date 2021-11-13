@@ -19,6 +19,11 @@ public class CharactersDao {
     private final Logger logger = LogManager.getLogger(this.getClass());
     SessionFactory sessionFactory = SessionFactoryProvider.getSessionFactory();
 
+    /**
+     * Gets all characters currently in the database.
+     *
+     * @return a List of all characters
+     */
     public List<Characters> getAllCharacters() {
         logger.info("Getting all characters...");
         Session session = sessionFactory.openSession();
@@ -44,7 +49,7 @@ public class CharactersDao {
     }
 
     /**
-     * Gets a character by id
+     * Gets a character by the user's id
      * @param userId user ID to search by
      * @return a list of characters
      */
@@ -60,6 +65,12 @@ public class CharactersDao {
         return characters;
     }
 
+    /**
+     * Gets all characters in the database by the user to whom they belong
+     *
+     * @param user a User object representing the user whose characters you're searching for
+     * @return a List of all characters belonging to that user
+     */
     public List<Characters> getByUser(User user) {
         Session session = sessionFactory.openSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -72,6 +83,11 @@ public class CharactersDao {
         return characters;
     }
 
+    /**
+     * Save or update a character in the database
+     *
+     * @param character the Characters object representing all the character's new data
+     */
     public void saveOrUpdate(Characters character) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
@@ -80,6 +96,12 @@ public class CharactersDao {
         session.close();
     }
 
+    /**
+     * Insert a new character into the database
+     *
+     * @param character a Characters (character) to insert into the database
+     * @return an int representing the id of the newly inserted character
+     */
     public int insert(Characters character) {
         int id = 0;
         Session session = sessionFactory.openSession();
@@ -90,6 +112,11 @@ public class CharactersDao {
         return id;
     }
 
+    /**
+     * Delete a character in the database
+     *
+     * @param character a Characters object representing the character to delete
+     */
     public void delete(Characters character) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
