@@ -14,5 +14,6 @@
         </property>
         <mapping class="com.jenmann.entity.Characters"/>
         <mapping class="com.jenmann.entity.User"/>
+        <mapping class="com.jenmann.entity.Encounter"/>
     </session-factory>
 </hibernate-configuration>
