@@ -21,7 +21,10 @@ public class Encounter {
     @Column(name = "difficulty")
     private String difficulty;
 
-    @OneToMany(mappedBy = "encounter", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "characters_encounters", joinColumns = {
+            @JoinColumn(name = "encounter_id")},
+            inverseJoinColumns = {@JoinColumn(name = "character_id")})
     private Set<Characters> encounterCharacters = new HashSet<Characters>(0);
 
     public Encounter() {

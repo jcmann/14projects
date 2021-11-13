@@ -3,6 +3,8 @@ package com.jenmann.entity;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The type Character.
@@ -33,6 +35,12 @@ public class Characters {
             foreignKey = @ForeignKey(name = "user_id")
     )
     private User user;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "characters_encounters", joinColumns = {
+            @JoinColumn(name = "character_id")},
+    inverseJoinColumns = {@JoinColumn(name = "encounter_id")})
+    private Set<Encounter> characterEncounters = new HashSet<Encounter>(0);
 
     /**
      * Instantiates a new Character.
@@ -187,6 +195,7 @@ public class Characters {
     public User getUser() {
         return user;
     }
+
     /**
      * Gets the user to whom these characters belong
      *
@@ -194,5 +203,23 @@ public class Characters {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * Gets the set of encounters to which this character has been added.
+     *
+     * @return the set of encounters, the instance variable
+     */
+    public Set<Encounter> getCharacterEncounters() {
+        return characterEncounters;
+    }
+
+    /**
+     * Sets the set of encounters to which this character has been added
+     *
+     * @param characterEncounters the new set to assign to the instance variable
+     */
+    public void setCharacterEncounters(Set<Encounter> characterEncounters) {
+        this.characterEncounters = characterEncounters;
     }
 }
