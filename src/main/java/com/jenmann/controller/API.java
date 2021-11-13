@@ -23,6 +23,7 @@ public class API extends Application {
         HashSet h = new HashSet<Class<?>>();
         h.add(CharacterAPI.class);
         h.add(MonsterAPI.class);
+        h.add(EncounterAPI.class);
         return h;
     }
 
