@@ -2,6 +2,7 @@ package com.jenmann.persistence;
 
 import com.jenmann.entity.Characters;
 import com.jenmann.entity.Encounter;
+import com.jenmann.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -47,6 +48,41 @@ public class EncounterDao {
         Encounter encounter = session.get(Encounter.class, id);
         session.close();
         return encounter;
+    }
+
+    /**
+     * Gets an encounter by the user's id
+     * @param userId user ID to search by
+     * @return a list of encounters
+     */
+    public List<Encounter> getByUserId(int userId) {
+        Session session = sessionFactory.openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Encounter> query = builder.createQuery(Encounter.class);
+        Root<Encounter> root = query.from(Encounter.class);
+        query.select(root).where(builder.equal(root.get("user_id"), userId));
+        List<Encounter> encounters = session.createQuery(query).getResultList();
+        session.close();
+
+        return encounters;
+    }
+
+    /**
+     * Gets all encounters in the database by the user to whom they belong
+     *
+     * @param user a User object representing the user whose encounters you're searching for
+     * @return a List of all encounters belonging to that user
+     */
+    public List<Encounter> getByUser(User user) {
+        Session session = sessionFactory.openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Encounter> query = builder.createQuery(Encounter.class);
+        Root<Encounter> root = query.from(Encounter.class);
+        query.select(root).where(builder.equal(root.get("user"), user));
+        List<Encounter> encounters = session.createQuery(query).getResultList();
+        session.close();
+
+        return encounters;
     }
 
     /**
