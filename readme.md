@@ -53,6 +53,7 @@ most important part is a good UI.
 ### Dev-related Stretch Goals
 
 - [ ] Fix Amplify/Redux so the Redux Toolkit reducer does not manually reload the page for changes in login status to take effect
+- [ ] Implement APIFormatUtility for cleaner code
 
 ## Project Plan
 

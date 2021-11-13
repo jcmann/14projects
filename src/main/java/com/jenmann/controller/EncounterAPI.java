@@ -37,6 +37,10 @@ public class EncounterAPI {
      */
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+    @GET
+    @Produces("application/json")
+    public Response getAllEncounters() {
 
+    }
 
 }

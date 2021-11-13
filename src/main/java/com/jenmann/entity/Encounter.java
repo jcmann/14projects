@@ -21,6 +21,12 @@ public class Encounter {
     @Column(name = "difficulty")
     private String difficulty;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id",
+            foreignKey = @ForeignKey(name = "user_id")
+    )
+    private User user;
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "characters_encounters", joinColumns = {
             @JoinColumn(name = "encounter_id")},
@@ -73,5 +79,13 @@ public class Encounter {
 
     public void setEncounterCharacters(Set<Characters> encounterCharacters) {
         this.encounterCharacters = encounterCharacters;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
