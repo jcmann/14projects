@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Characters;
+import com.jenmann.entity.Encounter;
 import com.jenmann.persistence.EncounterDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +41,16 @@ public class EncounterAPI {
     @GET
     @Produces("application/json")
     public Response getAllEncounters() {
+        List<Encounter> allCharacters = dao.getAllEncounters();
+        String responseJSON = "";
 
+        try {
+            responseJSON = objectMapper.writeValueAsString(allCharacters);
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+        }
+
+        return Response.status(200).entity(responseJSON).build();
     }
 
 }

@@ -21,16 +21,16 @@ public class Encounter {
     @Column(name = "difficulty")
     private String difficulty;
 
+    @Column(name = "description")
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "user_id")
     )
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "characters_encounters", joinColumns = {
-            @JoinColumn(name = "encounter_id")},
-            inverseJoinColumns = {@JoinColumn(name = "character_id")})
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "characterEncounters")
     private Set<Characters> encounterCharacters = new HashSet<Characters>(0);
 
     public Encounter() {
@@ -87,5 +87,13 @@ public class Encounter {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

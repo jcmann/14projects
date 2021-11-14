@@ -36,10 +36,10 @@ public class Characters {
     )
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "characters_encounters", joinColumns = {
             @JoinColumn(name = "character_id")},
-    inverseJoinColumns = {@JoinColumn(name = "encounter_id")})
+        inverseJoinColumns = {@JoinColumn(name = "encounter_id")})
     private Set<Encounter> characterEncounters = new HashSet<Encounter>(0);
 
     /**
