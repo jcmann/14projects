@@ -42,12 +42,6 @@ public class MonsterAPI {
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
-     * A utility object that reduces duplicate code by generalizing
-     * JSON formatting for all endpoints.
-     */
-    private APIFormatUtility formatter = new APIFormatUtility(Monster.class);
-
-    /**
      * Sends a response containing a JSON array of all monsters provided by the 5e API
      *
      * @return all characters, sent as a JSON array
@@ -56,7 +50,13 @@ public class MonsterAPI {
     @Produces("application/json")
     public Response getAllMonsters() {
         GetAllResponse allMonsters = getDao().getAllMonsters();
-        String responseJSON = formatter.jsonFormatHelper(allMonsters.getResults());
+        String responseJSON = "";
+
+        try {
+            responseJSON = getObjectMapper().writeValueAsString(allMonsters.getResults());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+        }
 
         return Response.status(200).entity(responseJSON).build();
 
