@@ -24,6 +24,7 @@ public class API extends Application {
         h.add(CharacterAPI.class);
         h.add(MonsterAPI.class);
         h.add(EncounterAPI.class);
+        h.add(UserAPI.class);
         return h;
     }
 
