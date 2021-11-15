@@ -53,4 +53,40 @@ public class EncounterAPI {
         return Response.status(200).entity(responseJSON).build();
     }
 
+    // get by encounter id
+    @GET
+    @Path("{id}")
+    @Produces("application/json")
+    public Response getEncounterByID(@PathParam("id") int id) {
+        Encounter encounter = getDao().getById(id);
+        String responseJSON = "";
+
+        try {
+            responseJSON = getObjectMapper().writeValueAsString(encounter);
+        } catch (Exception e) {
+            logger.error("", e); // TODO clean up logs
+        }
+
+        return Response.status(200).entity(responseJSON).build();
+    }
+
+    public EncounterDao getDao() {
+        return dao;
+    }
+
+    public void setDao(EncounterDao dao) {
+        this.dao = dao;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
 }
