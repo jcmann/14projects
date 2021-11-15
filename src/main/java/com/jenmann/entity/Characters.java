@@ -1,5 +1,6 @@
 package com.jenmann.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -40,6 +41,7 @@ public class Characters {
     @JoinTable(name = "characters_encounters", joinColumns = {
             @JoinColumn(name = "character_id")},
         inverseJoinColumns = {@JoinColumn(name = "encounter_id")})
+    @JsonIgnore
     private Set<Encounter> characterEncounters = new HashSet<Encounter>(0);
 
     /**

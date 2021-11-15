@@ -51,7 +51,7 @@ public class CharacterAPI {
         try {
             responseJSON = getObjectMapper().writeValueAsString(allCharacters);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return Response.status(200).entity(responseJSON).build();
@@ -75,7 +75,7 @@ public class CharacterAPI {
         try {
             responseJSON = getObjectMapper().writeValueAsString(character);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error(e.getStackTrace()); // TODO clean up logs
         }
 
         return Response.status(200).entity(responseJSON).build();

@@ -11,6 +11,7 @@ import com.jenmann.entity.GetAllResponse;
 import com.jenmann.entity.Monster;
 import com.jenmann.persistence.CharactersDao;
 import com.jenmann.persistence.MonsterDao;
+import com.jenmann.util.APIFormatUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,6 +42,12 @@ public class MonsterAPI {
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
+     * A utility object that reduces duplicate code by generalizing
+     * JSON formatting for all endpoints.
+     */
+    private APIFormatUtility formatter = new APIFormatUtility(Monster.class);
+
+    /**
      * Sends a response containing a JSON array of all monsters provided by the 5e API
      *
      * @return all characters, sent as a JSON array
@@ -49,13 +56,7 @@ public class MonsterAPI {
     @Produces("application/json")
     public Response getAllMonsters() {
         GetAllResponse allMonsters = getDao().getAllMonsters();
-        String responseJSON = "";
-
-        try {
-            responseJSON = getObjectMapper().writeValueAsString(allMonsters.getResults());
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-        }
+        String responseJSON = formatter.jsonFormatHelper(allMonsters.getResults());
 
         return Response.status(200).entity(responseJSON).build();
 
