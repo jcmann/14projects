@@ -77,4 +77,29 @@ public class UserAPI {
 
     }
 
+    /**
+     * This endpoint expects a user ID, and will return the characters associated with that user.
+     *
+     * @param id a user ID
+     * @return stringified JSON representing all characters found belonging to the user
+     */
+    @GET
+    @Path("{id}/characters")
+    @Produces("application/json")
+    public Response getUserCharacters(@PathParam("id") int id) {
+
+        User user = dao.getById(id);
+        List<Characters> characters = charactersDao.getByUser(user);
+        String responseJSON = "";
+
+        try {
+            responseJSON = objectMapper.writeValueAsString(characters);
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+
+        return Response.status(200).entity(responseJSON).build();
+
+    }
+
 }
