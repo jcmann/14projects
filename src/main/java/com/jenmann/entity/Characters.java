@@ -32,22 +32,22 @@ public class Characters {
     private String characterClass;
 
     @Column(name = "strength")
-    private int strength;
+    private Integer strength;
 
     @Column(name = "dexterity")
-    private int dexterity;
+    private Integer dexterity;
 
     @Column(name = "constitution")
-    private int constitution;
+    private Integer constitution;
 
     @Column(name = "intelligence")
-    private int intelligence;
+    private Integer intelligence;
 
     @Column(name = "wisdom")
-    private int wisdom;
+    private Integer wisdom;
 
     @Column(name = "charisma")
-    private int charisma;
+    private Integer charisma;
 
     @ManyToOne
     @JoinColumn(name = "user_id",
@@ -284,7 +284,7 @@ public class Characters {
      *
      * @return the strength
      */
-    public int getStrength() {
+    public Integer getStrength() {
         return strength;
     }
 
@@ -293,7 +293,7 @@ public class Characters {
      *
      * @param strength the strength
      */
-    public void setStrength(int strength) {
+    public void setStrength(Integer strength) {
         this.strength = strength;
     }
 
@@ -302,7 +302,7 @@ public class Characters {
      *
      * @return the dexterity
      */
-    public int getDexterity() {
+    public Integer getDexterity() {
         return dexterity;
     }
 
@@ -311,7 +311,7 @@ public class Characters {
      *
      * @param dexterity the dexterity
      */
-    public void setDexterity(int dexterity) {
+    public void setDexterity(Integer dexterity) {
         this.dexterity = dexterity;
     }
 
@@ -320,7 +320,7 @@ public class Characters {
      *
      * @return the constitution
      */
-    public int getConstitution() {
+    public Integer getConstitution() {
         return constitution;
     }
 
@@ -329,7 +329,7 @@ public class Characters {
      *
      * @param constitution the constitution
      */
-    public void setConstitution(int constitution) {
+    public void setConstitution(Integer constitution) {
         this.constitution = constitution;
     }
 
@@ -338,7 +338,7 @@ public class Characters {
      *
      * @return the intelligence
      */
-    public int getIntelligence() {
+    public Integer getIntelligence() {
         return intelligence;
     }
 
@@ -347,7 +347,7 @@ public class Characters {
      *
      * @param intelligence the intelligence
      */
-    public void setIntelligence(int intelligence) {
+    public void setIntelligence(Integer intelligence) {
         this.intelligence = intelligence;
     }
 
@@ -356,7 +356,7 @@ public class Characters {
      *
      * @return the wisdom
      */
-    public int getWisdom() {
+    public Integer getWisdom() {
         return wisdom;
     }
 
@@ -365,7 +365,7 @@ public class Characters {
      *
      * @param wisdom the wisdom
      */
-    public void setWisdom(int wisdom) {
+    public void setWisdom(Integer wisdom) {
         this.wisdom = wisdom;
     }
 
@@ -374,7 +374,7 @@ public class Characters {
      *
      * @return the charisma
      */
-    public int getCharisma() {
+    public Integer getCharisma() {
         return charisma;
     }
 
@@ -383,7 +383,7 @@ public class Characters {
      *
      * @param charisma the charisma
      */
-    public void setCharisma(int charisma) {
+    public void setCharisma(Integer charisma) {
         this.charisma = charisma;
     }
 }
