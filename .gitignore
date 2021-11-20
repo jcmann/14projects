@@ -37,6 +37,7 @@
 /target/
 /src/main/filters/*
 *.log
+/src/main/resources/cognito.properties
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
