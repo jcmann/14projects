@@ -212,6 +212,7 @@ public class UserAPI implements PropertiesLoader {
         return request;
     }
 
+    // TODO add comment
     private void loadProperties() {
         try {
             properties = loadProperties("/cognito.properties");
@@ -227,6 +228,22 @@ public class UserAPI implements PropertiesLoader {
         }
     }
 
+    @GET
+    @Path("username/{username}")
+    @Produces("application/json")
+    public Response getByUsername(@PathParam("username") String username) {
+        User user = dao.getByUsername(username);
+        String responseJSON = "";
+
+        try {
+            responseJSON = objectMapper.writeValueAsString(user);
+        } catch (Exception e) {
+            logger.error(e.getStackTrace()); // TODO clean up logs
+        }
+
+        return Response.status(200).entity(responseJSON).build();
+    }
+
     /**
      * This endpoint expects a user ID, and will return the encounters
      * associated with that user ID.
@@ -239,9 +256,33 @@ public class UserAPI implements PropertiesLoader {
     @Produces("application/json")
     public Response getUserEncounters(@PathParam("jwt") String jwt) {
 
-        //
+        String responseJSON = "";
 
-        return Response.status(200).entity("Hello World").build();
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            // return error
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                // If the user does not exist, add their record and return an appropriate message
+            } else {
+                // If the user exists get their encounters
+                List<Encounter> encounters = encounterDao.getByUser(user);
+
+                try {
+                    responseJSON = objectMapper.writeValueAsString(encounters);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+
+            }
+
+        }
+
+        return Response.status(200).entity(responseJSON).build();
 
     }
 
