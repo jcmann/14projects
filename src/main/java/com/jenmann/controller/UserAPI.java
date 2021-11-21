@@ -42,10 +42,7 @@ import java.security.PublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -104,6 +101,7 @@ public class UserAPI implements PropertiesLoader {
      */
     public String processJWT(String jwt) {
         String username = null;
+        loadProperties();
 
         if (jwt == null) {
             // TODO figure out error handling
@@ -200,9 +198,16 @@ public class UserAPI implements PropertiesLoader {
         parameters.put("code", jwt);
         parameters.put("redirect_uri", REDIRECT_URL);
 
-        String form = parameters.keySet().stream()
-                .map(key -> key + "=" + URLEncoder.encode(parameters.get(key), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&"));
+        logger.debug("PARAMETERS KEYSET: ");
+        logger.debug(parameters.keySet());
+//        String form = parameters.keySet().stream()
+//                .map(key -> key + "=" + URLEncoder.encode(parameters.get(key), StandardCharsets.UTF_8))
+//                .collect(Collectors.joining("&"));
+        String form = "hi";
+        for (Map.Entry<String, String> entry : parameters.entrySet()) {
+            logger.debug("ENTRYSET KEY: " + entry.getKey());
+            logger.debug("ENTRYSET VALUE: " + entry.getValue());
+        }
 
         String encoding = Base64.getEncoder().encodeToString(keys.getBytes());
 
@@ -219,6 +224,11 @@ public class UserAPI implements PropertiesLoader {
             CLIENT_ID = properties.getProperty("client.id");
             LOGIN_URL = properties.getProperty("loginURL");
             REDIRECT_URL = properties.getProperty("redirectURL");
+            CLIENT_SECRET = properties.getProperty("client.secret");
+            OAUTH_URL = properties.getProperty("oauthURL");
+            LOGIN_URL = properties.getProperty("loginURL");
+            REGION = properties.getProperty("region");
+            POOL_ID = properties.getProperty("poolId");
         } catch (IOException e) {
             logger.error("Could not load properties...");
             logger.error("", e);
