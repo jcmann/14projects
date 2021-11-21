@@ -5,7 +5,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jenmann.auth.CognitoJWTParser;
+import com.jenmann.auth.CognitoTokenHeader;
 import com.jenmann.auth.Keys;
 import com.jenmann.auth.TokenResponse;
 import com.jenmann.entity.Characters;
@@ -19,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -26,6 +36,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -95,6 +111,7 @@ public class UserAPI implements PropertiesLoader {
             HttpRequest authRequest = buildAuthRequest(jwt);
             try {
                 TokenResponse tokenResponse = getToken(authRequest);
+                username = validate(tokenResponse);
             } catch (IOException e) {
                 logger.error("There was an IO Exception while trying to process the auth request.");
                 logger.error("", e);
@@ -116,7 +133,6 @@ public class UserAPI implements PropertiesLoader {
 
         response = client.send(authRequest, HttpResponse.BodyHandlers.ofString());
 
-
         logger.debug("Response headers: " + response.headers().toString());
         logger.debug("Response body: " + response.body().toString());
 
@@ -125,6 +141,52 @@ public class UserAPI implements PropertiesLoader {
         logger.debug("Id token: " + tokenResponse.getIdToken());
 
         return tokenResponse;
+    }
+
+    // TODO comment
+    private String validate(TokenResponse tokenResponse) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        CognitoTokenHeader tokenHeader = mapper.readValue(CognitoJWTParser.getHeader(tokenResponse.getIdToken()).toString(), CognitoTokenHeader.class);
+
+        // Header should have kid and alg- https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-the-id-token.html
+        String keyId = tokenHeader.getKid();
+        String alg = tokenHeader.getAlg();
+
+        // todo pick proper key from the two - it just so happens that the first one works for my case
+        // Use Key's N and E
+        BigInteger modulus = new BigInteger(1, org.apache.commons.codec.binary.Base64.decodeBase64(jwks.getKeys().get(0).getN()));
+        BigInteger exponent = new BigInteger(1, org.apache.commons.codec.binary.Base64.decodeBase64(jwks.getKeys().get(0).getE()));
+
+        // TODO the following is "happy path", what if the exceptions are caught?
+        // Create a public key
+        PublicKey publicKey = null;
+        try {
+            publicKey = KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(modulus, exponent));
+        } catch (InvalidKeySpecException e) {
+            logger.error("Invalid Key Error " + e.getMessage(), e);
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Algorithm Error " + e.getMessage(), e);
+        }
+
+        // get an algorithm instance
+        Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) publicKey, null);
+
+        // Verify ISS field of the token to make sure it's from the Cognito source
+        String iss = String.format("https://cognito-idp.%s.amazonaws.com/%s", REGION, POOL_ID);
+
+        JWTVerifier verifier = JWT.require(algorithm)
+                .withIssuer(iss)
+                .withClaim("token_use", "id") // make sure you're verifying id token
+                .build();
+
+        // Verify the token
+        DecodedJWT jwt = verifier.verify(tokenResponse.getIdToken());
+        String userName = jwt.getClaim("cognito:username").asString();
+        logger.debug("here's the username: " + userName);
+
+        logger.debug("here are all the available claims: " + jwt.getClaims());
+
+        return userName;
     }
 
     // TODO comment
