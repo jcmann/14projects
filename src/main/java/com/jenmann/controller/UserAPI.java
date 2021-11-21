@@ -7,6 +7,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.auth.Keys;
+import com.jenmann.auth.TokenResponse;
 import com.jenmann.entity.Characters;
 import com.jenmann.entity.Encounter;
 import com.jenmann.entity.User;
@@ -21,7 +22,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
@@ -87,14 +90,44 @@ public class UserAPI implements PropertiesLoader {
         String username = null;
 
         if (jwt == null) {
-            // figure out error handling
+            // TODO figure out error handling
         } else {
             HttpRequest authRequest = buildAuthRequest(jwt);
+            try {
+                TokenResponse tokenResponse = getToken(authRequest);
+            } catch (IOException e) {
+                logger.error("There was an IO Exception while trying to process the auth request.");
+                logger.error("", e);
+                // TODO error handling
+            } catch (InterruptedException e) {
+                logger.error("There was an InterruptedException while trying to process the auth request.");
+                logger.error("", e);
+                // TODO error handling
+            }
         }
 
         return username;
     }
 
+    // TODO comment
+    private TokenResponse getToken(HttpRequest authRequest) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse<?> response = null;
+
+        response = client.send(authRequest, HttpResponse.BodyHandlers.ofString());
+
+
+        logger.debug("Response headers: " + response.headers().toString());
+        logger.debug("Response body: " + response.body().toString());
+
+        ObjectMapper mapper = new ObjectMapper();
+        TokenResponse tokenResponse = mapper.readValue(response.body().toString(), TokenResponse.class);
+        logger.debug("Id token: " + tokenResponse.getIdToken());
+
+        return tokenResponse;
+    }
+
+    // TODO comment
     private HttpRequest buildAuthRequest(String jwt) {
         String keys = CLIENT_ID + ":" + CLIENT_SECRET;
 
