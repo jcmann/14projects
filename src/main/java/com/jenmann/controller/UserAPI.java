@@ -55,7 +55,6 @@ import java.util.stream.Collectors;
  */
 @Path("/users")
 public class UserAPI implements PropertiesLoader {
-    // TODO hopefully an API implementing PL isn't an issue
 
     /**
      * Represents and handles the database connectivity for all User-related data
@@ -82,8 +81,15 @@ public class UserAPI implements PropertiesLoader {
      */
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+    /**
+     * A Properties object intended to represent cognito.properties for AWS Cognito integration
+     */
     private Properties properties;
 
+    /**
+     * The following are all instance variables to be filled in via cognito.properties as it's fed into the
+     * properties instance variable, and a laodKeys method for jwks.
+     */
     private String CLIENT_ID;
     private String CLIENT_SECRET;
     private String OAUTH_URL;
@@ -109,10 +115,8 @@ public class UserAPI implements PropertiesLoader {
         if (jwt == null) {
             // TODO figure out error handling
         } else {
-            HttpRequest authRequest = buildAuthRequest(jwt);
             try {
-//                TokenResponse tokenResponse = getToken(authRequest);
-                username = validate(jwt); // TODO try to rework this to only need the ID Token
+                username = validate(jwt);
             } catch (IOException e) {
                 logger.error("There was an IO Exception while trying to process the auth request.");
                 logger.error("", e);
@@ -121,34 +125,20 @@ public class UserAPI implements PropertiesLoader {
                 logger.error("Something went wrong trying to process the auth request.");
                 logger.error("", e);
             }
-//            catch (InterruptedException e) {
-//                logger.error("There was an InterruptedException while trying to process the auth request.");
-//                logger.error("", e);
-//                // TODO error handling
-//            }
         }
 
         return username;
     }
 
-    // TODO comment
-    private TokenResponse getToken(HttpRequest authRequest) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpResponse<?> response = null;
-
-        response = client.send(authRequest, HttpResponse.BodyHandlers.ofString());
-
-        logger.debug("Response headers: " + response.headers().toString());
-        logger.debug("Response body: " + response.body().toString());
-
-//        ObjectMapper mapper = new ObjectMapper();
-        TokenResponse tokenResponse = objectMapper.readValue(response.body().toString(), TokenResponse.class);
-        logger.debug("Id token: " + tokenResponse.getIdToken());
-
-        return tokenResponse;
-    }
-
-    // TODO comment
+    /**
+     * This method takes in a JWT ID Token, intended to be received from SPA frontend client. It handles the
+     * parsing and validation of the JWT. If the validation is successful, it will return the username of the
+     * validated user. If it is unsuccessful, the backend currently catches an exception. This is a // TODO as well.
+     *
+     * @param jwtString a JWT ID Token from AWS Cognito
+     * @return if user is validated and logged in, will return a username.
+     * @throws IOException
+     */
     private String validate(String jwtString) throws IOException {
         CognitoTokenHeader tokenHeader = objectMapper.readValue(CognitoJWTParser.getHeader(jwtString).toString(), CognitoTokenHeader.class);
 
@@ -158,7 +148,6 @@ public class UserAPI implements PropertiesLoader {
         String keyId = tokenHeader.getKid();
         String alg = tokenHeader.getAlg();
 
-        // todo pick proper key from the two - it just so happens that the first one works for my case
         // Use Key's N and E
         BigInteger modulus = new BigInteger(1, org.apache.commons.codec.binary.Base64.decodeBase64(jwks.getKeys().get(0).getN()));
         BigInteger exponent = new BigInteger(1, org.apache.commons.codec.binary.Base64.decodeBase64(jwks.getKeys().get(0).getE()));
@@ -195,33 +184,6 @@ public class UserAPI implements PropertiesLoader {
         return userName;
     }
 
-    // TODO comment
-    private HttpRequest buildAuthRequest(String jwt) {
-        String keys = CLIENT_ID + ":" + CLIENT_SECRET;
-
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put("grant_type", "authorization_code");
-        parameters.put("client-secret", CLIENT_SECRET);
-        parameters.put("client_id", CLIENT_ID);
-        parameters.put("code", jwt);
-        parameters.put("redirect_uri", REDIRECT_URL);
-
-        String form = parameters.keySet().stream()
-                .map(key -> key + "=" + URLEncoder.encode(parameters.get(key), StandardCharsets.UTF_8))
-                .collect(Collectors.joining("&"));
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            logger.debug("ENTRYSET KEY: " + entry.getKey());
-            logger.debug("ENTRYSET VALUE: " + entry.getValue());
-        }
-
-        String encoding = Base64.getEncoder().encodeToString(keys.getBytes());
-
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(OAUTH_URL))
-                .headers("Content-Type", "application/x-www-form-urlencoded", "Authorization", "Basic " + encoding)
-                .POST(HttpRequest.BodyPublishers.ofString(form)).build();
-        return request;
-    }
-
     /**
      * Gets the JSON Web Key Set (JWKS) for the user pool from cognito and loads it
      * into objects for easier use.
@@ -245,7 +207,10 @@ public class UserAPI implements PropertiesLoader {
         }
     }
 
-    // TODO add comment
+    /**
+     * Utility method to load properties from /cognito.properties (in Resource directory) for use
+     * in the API.
+     */
     private void loadProperties() {
         try {
             properties = loadProperties("/cognito.properties");
