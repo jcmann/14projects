@@ -42,6 +42,18 @@ public class UserDao {
         return user;
     }
 
+    public User getByUsername(String username) {
+        Session session = sessionFactory.openSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        Expression<String> propertyPath = root.get("username");
+        query.where(builder.equal(propertyPath, username));
+        User president = session.createQuery(query).uniqueResult();
+        session.close();
+        return president;
+    }
+
     public void saveOrUpdate(User user) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
