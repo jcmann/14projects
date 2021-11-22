@@ -40,3 +40,7 @@
 | 9    | Sa  | Exercise 9                                                               | 2     | 
 | 9    | Sa  | Continue developing DMBook API endpoints (Monsters, Characters)          | 1.5   | 
 | 10   | Tu  | Frontend work                                                            | 2     |
+| 10   |     | Backend modifications for Encounters                                     | 1     | 
+| 11   |     | GH Pages deploy/checkpoint 3 submission (oops!), adding API endpoints    | 7     |
+| 12   |     | Minimal frontend work, UUID/Cognito to User implementation (basic)       | 10    | 
+| 13   |     |                                                                          |       |
