@@ -24,9 +24,11 @@ import com.jenmann.persistence.CharactersDao;
 import com.jenmann.persistence.EncounterDao;
 import com.jenmann.persistence.UserDao;
 import com.jenmann.util.PropertiesLoader;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
@@ -102,23 +104,28 @@ public class UserAPI implements PropertiesLoader {
     public String processJWT(String jwt) {
         String username = null;
         loadProperties();
+        loadKey();
 
         if (jwt == null) {
             // TODO figure out error handling
         } else {
             HttpRequest authRequest = buildAuthRequest(jwt);
             try {
-                TokenResponse tokenResponse = getToken(authRequest);
-                username = validate(tokenResponse);
+//                TokenResponse tokenResponse = getToken(authRequest);
+                username = validate(jwt); // TODO try to rework this to only need the ID Token
             } catch (IOException e) {
                 logger.error("There was an IO Exception while trying to process the auth request.");
                 logger.error("", e);
                 // TODO error handling
-            } catch (InterruptedException e) {
-                logger.error("There was an InterruptedException while trying to process the auth request.");
+            } catch (Exception e) {
+                logger.error("Something went wrong trying to process the auth request.");
                 logger.error("", e);
-                // TODO error handling
             }
+//            catch (InterruptedException e) {
+//                logger.error("There was an InterruptedException while trying to process the auth request.");
+//                logger.error("", e);
+//                // TODO error handling
+//            }
         }
 
         return username;
@@ -134,19 +141,20 @@ public class UserAPI implements PropertiesLoader {
         logger.debug("Response headers: " + response.headers().toString());
         logger.debug("Response body: " + response.body().toString());
 
-        ObjectMapper mapper = new ObjectMapper();
-        TokenResponse tokenResponse = mapper.readValue(response.body().toString(), TokenResponse.class);
+//        ObjectMapper mapper = new ObjectMapper();
+        TokenResponse tokenResponse = objectMapper.readValue(response.body().toString(), TokenResponse.class);
         logger.debug("Id token: " + tokenResponse.getIdToken());
 
         return tokenResponse;
     }
 
     // TODO comment
-    private String validate(TokenResponse tokenResponse) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        CognitoTokenHeader tokenHeader = mapper.readValue(CognitoJWTParser.getHeader(tokenResponse.getIdToken()).toString(), CognitoTokenHeader.class);
+    private String validate(String jwtString) throws IOException {
+        CognitoTokenHeader tokenHeader = objectMapper.readValue(CognitoJWTParser.getHeader(jwtString).toString(), CognitoTokenHeader.class);
 
         // Header should have kid and alg- https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-the-id-token.html
+        logger.debug("TOKEN HEADER KID: " + tokenHeader.getKid());
+        logger.debug("TOKEN HEADER ALG: " + tokenHeader.getAlg());
         String keyId = tokenHeader.getKid();
         String alg = tokenHeader.getAlg();
 
@@ -178,7 +186,7 @@ public class UserAPI implements PropertiesLoader {
                 .build();
 
         // Verify the token
-        DecodedJWT jwt = verifier.verify(tokenResponse.getIdToken());
+        DecodedJWT jwt = verifier.verify(jwtString);
         String userName = jwt.getClaim("cognito:username").asString();
         logger.debug("here's the username: " + userName);
 
@@ -198,12 +206,9 @@ public class UserAPI implements PropertiesLoader {
         parameters.put("code", jwt);
         parameters.put("redirect_uri", REDIRECT_URL);
 
-        logger.debug("PARAMETERS KEYSET: ");
-        logger.debug(parameters.keySet());
-//        String form = parameters.keySet().stream()
-//                .map(key -> key + "=" + URLEncoder.encode(parameters.get(key), StandardCharsets.UTF_8))
-//                .collect(Collectors.joining("&"));
-        String form = "hi";
+        String form = parameters.keySet().stream()
+                .map(key -> key + "=" + URLEncoder.encode(parameters.get(key), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             logger.debug("ENTRYSET KEY: " + entry.getKey());
             logger.debug("ENTRYSET VALUE: " + entry.getValue());
@@ -215,6 +220,29 @@ public class UserAPI implements PropertiesLoader {
                 .headers("Content-Type", "application/x-www-form-urlencoded", "Authorization", "Basic " + encoding)
                 .POST(HttpRequest.BodyPublishers.ofString(form)).build();
         return request;
+    }
+
+    /**
+     * Gets the JSON Web Key Set (JWKS) for the user pool from cognito and loads it
+     * into objects for easier use.
+     *
+     * JSON Web Key Set (JWKS) location: https://cognito-idp.{region}.amazonaws.com/{userPoolId}/.well-known/jwks.json
+     * Demo url: https://cognito-idp.us-east-2.amazonaws.com/us-east-2_XaRYHsmKB/.well-known/jwks.json
+     *
+     */
+    private void loadKey() {
+
+        try {
+            URL jwksURL = new URL(String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", REGION, POOL_ID));
+            File jwksFile = new File("jwks.json");
+            FileUtils.copyURLToFile(jwksURL, jwksFile);
+            jwks = objectMapper.readValue(jwksFile, Keys.class);
+            logger.debug("Keys are loaded. Here's e: " + jwks.getKeys().get(0).getE());
+        } catch (IOException ioException) {
+            logger.error("Cannot load json..." + ioException.getMessage(), ioException);
+        } catch (Exception e) {
+            logger.error("Error loading json" + e.getMessage(), e);
+        }
     }
 
     // TODO add comment

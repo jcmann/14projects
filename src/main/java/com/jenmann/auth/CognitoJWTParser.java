@@ -30,6 +30,7 @@ public class CognitoJWTParser {
      */
     public static JSONObject getHeader(String jwt) {
         try {
+
             validateJWT(jwt);
             Base64.Decoder dec= Base64.getDecoder();
             final byte[] sectionDecoded = dec.decode(jwt.split("\\.")[HEADER]);
