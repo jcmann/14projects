@@ -296,22 +296,36 @@ public class UserAPI implements PropertiesLoader {
      * @return stringified JSON representing all characters found belonging to the user
      */
     @GET
-    @Path("{id}/characters")
+    @Path("{jwt}/characters")
     @Produces("application/json")
-    public Response getUserCharacters(@PathParam("id") int id) {
+    public Response getUserCharacters(@PathParam("jwt") String jwt) {
 
-        User user = dao.getById(id);
-        List<Characters> characters = charactersDao.getByUser(user);
         String responseJSON = "";
 
-        try {
-            responseJSON = objectMapper.writeValueAsString(characters);
-        } catch (Exception e) {
-            logger.error("", e);
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            // return error
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                // If the user does not exist, add their record and return an appropriate message
+            } else {
+                // If the user exists get their encounters
+                List<Characters> characters = charactersDao.getByUser(user);
+
+                try {
+                    responseJSON = objectMapper.writeValueAsString(characters);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+
+            }
+
         }
 
-        return Response.status(200).entity(responseJSON).build();
-
+        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
     }
-
 }
