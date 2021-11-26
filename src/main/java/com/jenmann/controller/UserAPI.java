@@ -285,7 +285,7 @@ public class UserAPI implements PropertiesLoader {
 
         }
 
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
 
     }
 
