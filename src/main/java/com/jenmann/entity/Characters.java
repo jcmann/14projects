@@ -53,6 +53,7 @@ public class Characters {
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "user_id")
     )
+    @JsonIgnore
     private User user;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
