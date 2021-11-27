@@ -99,6 +99,104 @@ public class UserAPI implements PropertiesLoader {
     private String POOL_ID;
     Keys jwks;
 
+    @GET
+    @Path("username/{username}")
+    @Produces("application/json")
+    public Response getByUsername(@PathParam("username") String username) {
+        User user = dao.getByUsername(username);
+        String responseJSON = "";
+
+        try {
+            responseJSON = objectMapper.writeValueAsString(user);
+        } catch (Exception e) {
+            logger.error(e.getStackTrace()); // TODO clean up logs
+        }
+
+        return Response.status(200).entity(responseJSON).build();
+    }
+
+    /**
+     * This endpoint expects a user ID, and will return the encounters
+     * associated with that user ID.
+     *
+     * @param jwt a JWT from the client of a user
+     * @return stringified JSON representing all encounters found
+     */
+    @GET
+    @Path("{jwt}/encounters")
+    @Produces("application/json")
+    public Response getUserEncounters(@PathParam("jwt") String jwt) {
+
+        String responseJSON = "";
+
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            // return error
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                // If the user does not exist, add their record and return an appropriate message
+            } else {
+                // If the user exists get their encounters
+                List<Encounter> encounters = encounterDao.getByUser(user);
+
+                try {
+                    responseJSON = objectMapper.writeValueAsString(encounters);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+
+            }
+
+        }
+
+        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
+
+    }
+
+    /**
+     * This endpoint expects a user ID, and will return the characters associated with that user.
+     *
+     * @param id a user ID
+     * @return stringified JSON representing all characters found belonging to the user
+     */
+    @GET
+    @Path("{jwt}/characters")
+    @Produces("application/json")
+    public Response getUserCharacters(@PathParam("jwt") String jwt) {
+
+        String responseJSON = "";
+
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            // return error
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                // If the user does not exist, add their record and return an appropriate message
+            } else {
+                // If the user exists get their encounters
+                List<Characters> characters = charactersDao.getByUser(user);
+
+                try {
+                    responseJSON = objectMapper.writeValueAsString(characters);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+
+            }
+
+        }
+
+        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
+    }
+
     /**
      * This is a helper method used for all Users API endpoints. A JWT that contains a valid, logged-in
      * user must be passed as the first parameter to access any DMBook data. Each endpoint must, then, validate
@@ -229,103 +327,5 @@ public class UserAPI implements PropertiesLoader {
             logger.error("There was an exception loading properties...");
             logger.error("", e);
         }
-    }
-
-    @GET
-    @Path("username/{username}")
-    @Produces("application/json")
-    public Response getByUsername(@PathParam("username") String username) {
-        User user = dao.getByUsername(username);
-        String responseJSON = "";
-
-        try {
-            responseJSON = objectMapper.writeValueAsString(user);
-        } catch (Exception e) {
-            logger.error(e.getStackTrace()); // TODO clean up logs
-        }
-
-        return Response.status(200).entity(responseJSON).build();
-    }
-
-    /**
-     * This endpoint expects a user ID, and will return the encounters
-     * associated with that user ID.
-     *
-     * @param jwt a JWT from the client of a user
-     * @return stringified JSON representing all encounters found
-     */
-    @GET
-    @Path("{jwt}/encounters")
-    @Produces("application/json")
-    public Response getUserEncounters(@PathParam("jwt") String jwt) {
-
-        String responseJSON = "";
-
-        // Get the username
-        String username = processJWT(jwt);
-
-        if (username == null) {
-            // return error
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                // If the user does not exist, add their record and return an appropriate message
-            } else {
-                // If the user exists get their encounters
-                List<Encounter> encounters = encounterDao.getByUser(user);
-
-                try {
-                    responseJSON = objectMapper.writeValueAsString(encounters);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-
-            }
-
-        }
-
-        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
-
-    }
-
-    /**
-     * This endpoint expects a user ID, and will return the characters associated with that user.
-     *
-     * @param id a user ID
-     * @return stringified JSON representing all characters found belonging to the user
-     */
-    @GET
-    @Path("{jwt}/characters")
-    @Produces("application/json")
-    public Response getUserCharacters(@PathParam("jwt") String jwt) {
-
-        String responseJSON = "";
-
-        // Get the username
-        String username = processJWT(jwt);
-
-        if (username == null) {
-            // return error
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                // If the user does not exist, add their record and return an appropriate message
-            } else {
-                // If the user exists get their encounters
-                List<Characters> characters = charactersDao.getByUser(user);
-
-                try {
-                    responseJSON = objectMapper.writeValueAsString(characters);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-
-            }
-
-        }
-
-        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
     }
 }
