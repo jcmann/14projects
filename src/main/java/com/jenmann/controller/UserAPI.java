@@ -164,8 +164,9 @@ public class UserAPI implements PropertiesLoader {
      */
     @DELETE
     @Path("{jwt}/encounters/{id}")
-//    @Produces("application/json")
     public Response deleteEncounterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+
+        // TODO implement jwt validation
 
         // Run a select to get the encounter from the database if it exists
         Encounter encounterToDelete = encounterDao.getById(idToDelete);
@@ -223,6 +224,36 @@ public class UserAPI implements PropertiesLoader {
         }
 
         return Response.status(200).entity(responseJSON).build();
+    }
+
+    /**
+     * This endpoint expects both a
+     * @param jwt
+     * @param idToDelete
+     * @return
+     */
+    @DELETE
+    @Path("{jwt}/characters/{id}")
+    public Response deleteCharacterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+
+        // TODO add jwt validation
+
+        // Run a select to get the encounter from the database if it exists
+        Characters characterToDelete = charactersDao.getById(idToDelete);
+
+        // If the encounter is null it was not found, return a 404
+        if (characterToDelete == null) {
+            return Response.status(404).entity("Character not found. Invalid ID.").build();
+        } else {
+            try {
+                charactersDao.delete(characterToDelete);
+            } catch (HibernateException e) {
+                return Response.status(404).entity("Character was found, but could not be deleted").build();
+            }
+
+            return Response.status(200).entity("Successfully deleted character.").build();
+        }
+
     }
 
     /**
