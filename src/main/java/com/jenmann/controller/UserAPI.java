@@ -1,9 +1,6 @@
 package com.jenmann.controller;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
 import com.auth0.jwt.JWT;
@@ -27,6 +24,7 @@ import com.jenmann.util.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 
 import java.io.File;
 import java.io.IOException;
@@ -153,14 +151,44 @@ public class UserAPI implements PropertiesLoader {
 
         }
 
-        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
+        return Response.status(200).entity(responseJSON).build();
 
     }
 
     /**
-     * This endpoint expects a user ID, and will return the characters associated with that user.
+     * Sources:
+     * - https://stackoverflow.com/questions/12695268/verify-create-update-delete-successfully-executed-in-hibernate
+     * @param jwt
+     * @param idToDelete
+     * @return
+     */
+    @DELETE
+    @Path("{jwt}/encounters/{id}")
+//    @Produces("application/json")
+    public Response deleteEncounterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+
+        // Run a select to get the encounter from the database if it exists
+        Encounter encounterToDelete = encounterDao.getById(idToDelete);
+
+        // If the encounter is null it was not found, return a 404
+        if (encounterToDelete == null) {
+            return Response.status(404).entity("Encounter not found. Invalid ID.").build();
+        } else {
+            try {
+                encounterDao.delete(encounterToDelete);
+            } catch (HibernateException e) {
+                return Response.status(404).entity("Encounter was found, but could not be deleted").build();
+            }
+
+            return Response.status(200).entity("Successfully deleted encounter.").build();
+        }
+
+    }
+
+    /**
+     * This endpoint expects a user ID token as a JWT, and will return the characters associated with that user.
      *
-     * @param id a user ID
+     * @param jwt the ID token for a logged in user
      * @return stringified JSON representing all characters found belonging to the user
      */
     @GET
@@ -194,7 +222,7 @@ public class UserAPI implements PropertiesLoader {
 
         }
 
-        return Response.status(200).header("Access-Control-Allow-Origin", "*").entity(responseJSON).build();
+        return Response.status(200).entity(responseJSON).build();
     }
 
     /**
