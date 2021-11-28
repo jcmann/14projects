@@ -47,7 +47,10 @@ import java.util.stream.Collectors;
 
 /**
  * This endpoint is responsible for handling all data related to users
- * for DMBook.
+ * for DMBook. I chose to include the data related to the user's encounters and characters
+ * here in this slightly long class on purpose to centralize that processing around the JWTs. Additionally,
+ * I was curious about the ability to create an admin interface that would handle all users' data through
+ * the decentralized/resource-specific APIs.
  *
  * @author jcmann
  */
@@ -224,6 +227,49 @@ public class UserAPI implements PropertiesLoader {
         }
 
         return Response.status(200).entity(responseJSON).build();
+    }
+
+    /**
+     * This endpoint handles post requests that seek to add a new character belonging to a given user. It expects
+     * the body to be sent as a JSON String, which is then parsed here.
+     *
+     * @param jwt the ID Token JWT for the currently logged in user
+     * @param body a JSON String containing all form data for the new character (except user id)
+     * @return
+     */
+    @POST
+    @Path("{jwt}/characters")
+    @Consumes("application/json")
+    public Response addNewCharacter(@PathParam("jwt") String jwt,  String body) {
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
+            } else {
+                Characters character = null;
+                try {
+                    character = objectMapper.readValue(body, Characters.class);
+                    character.setUser(user);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+                int newCharacterId = charactersDao.insert(character);
+
+                if (newCharacterId == 0) {
+                    return Response.status(404).entity("Character could not be added.").build();
+                } else {
+                    return Response.status(200).entity("Character successfully added.").build();
+                }
+
+            }
+
+        }
     }
 
     /**
