@@ -32,8 +32,8 @@ most important part is a good UI.
 
 ### Minimum Viable Product
 
-- [ ] As a Dungeon Master, I want to be able to create an account that saves my information in a database, and not just local browser storage, so my data persists across logins.
-- [ ] As a DM, I should be able to sign in and sign out of my account, and my data
+- [X] As a Dungeon Master, I want to be able to create an account that saves my information in a database, and not just local browser storage, so my data persists across logins.
+- [X] As a DM, I should be able to sign in and sign out of my account, and my data
       should persist across these logins.
 - [ ] As a DM, I want to be able to create, modify, and delete
       various encounters from my saved list of encounters.
