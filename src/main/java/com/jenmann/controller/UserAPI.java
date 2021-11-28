@@ -272,6 +272,42 @@ public class UserAPI implements PropertiesLoader {
         }
     }
 
+    @PUT
+    @Path("{jwt}/characters/{idToUpdate}")
+    public Response editCharacter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
+        logger.info("Beginning editCharacter endpoint");
+        String username = processJWT(jwt);
+        if (username == null) {
+            logger.info("User could not be parsed, so character was not added.");
+            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                logger.info("User could not be found in the database, so character was not added.");
+                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
+            } else {
+                Characters character = null;
+                try {
+                    character = objectMapper.readValue(body, Characters.class);
+                    character.setUser(user);
+                    charactersDao.saveOrUpdate(character);
+                } catch (HibernateException e) {
+                    logger.error("", e);
+                    logger.info("Failed to save or update.");
+                    return Response.status(404).entity("Failed to save or update.").build();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+
+                logger.info("Update was successful");
+                return Response.status(200).entity(1).build(); // TODO making this a boolean would be cool
+
+            }
+
+        }
+    }
+
     /**
      * This endpoint expects both a
      * @param jwt
