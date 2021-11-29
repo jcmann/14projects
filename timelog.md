@@ -43,4 +43,4 @@
 | 10   |     | Backend modifications for Encounters                                     | 1     | 
 | 11   |     | GH Pages deploy/checkpoint 3 submission (oops!), adding API endpoints    | 7     |
 | 12   |     | Minimal frontend work, UUID/Cognito to User implementation (basic)       | 10    | 
-| 13   |     |                                                                          |       |
+| 13   |     | Connect most of frontend (characters and encounters lists and forms) to the API using thunks and add API endpoints as needed | 15 |                                                                          |       |
