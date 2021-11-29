@@ -159,6 +159,85 @@ public class UserAPI implements PropertiesLoader {
     }
 
     /**
+     * This endpoint handles post requests that seek to add a new character belonging to a given user. It expects
+     * the body to be sent as a JSON String, which is then parsed here.
+     *
+     * @param jwt the ID Token JWT for the currently logged in user
+     * @param body a JSON String containing all form data for the new character (except user id)
+     * @return
+     */
+    @POST
+    @Path("{jwt}/encounters")
+    @Consumes("application/json")
+    public Response addNewEncounter(@PathParam("jwt") String jwt,  String body) {
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
+            } else {
+                Encounter encounter = null;
+                try {
+                    encounter = objectMapper.readValue(body, Encounter.class);
+                    encounter.setUser(user);
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+                int newEncounterID = encounterDao.insert(encounter);
+
+                if (newEncounterID == 0) {
+                    return Response.status(404).entity("Character could not be added.").build();
+                } else {
+                    return Response.status(200).entity("Character successfully added.").build();
+                }
+
+            }
+
+        }
+    }
+
+    @PUT
+    @Path("{jwt}/encounters/{idToUpdate}")
+    public Response editEncounter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
+        logger.info("Beginning editEncounter endpoint");
+        String username = processJWT(jwt);
+        if (username == null) {
+            logger.info("User could not be parsed, so encounter was not added.");
+            return Response.status(404).entity("User could not be parsed, so encounter was not added.").build();
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                logger.info("User could not be found in the database, so encounter was not added.");
+                return Response.status(404).entity("User could not be found in the database, so encounter was not added.").build();
+            } else {
+                Encounter encounter = null;
+                try {
+                    encounter = objectMapper.readValue(body, Encounter.class);
+                    encounter.setUser(user);
+                    encounterDao.saveOrUpdate(encounter);
+                } catch (HibernateException e) {
+                    logger.error("", e);
+                    logger.info("Failed to save or update.");
+                    return Response.status(404).entity("Failed to save or update.").build();
+                } catch (Exception e) {
+                    logger.error("", e);
+                }
+
+                logger.info("Update was successful");
+                return Response.status(200).entity(1).build(); // TODO making this a boolean would be cool
+
+            }
+
+        }
+    }
+
+    /**
      * Sources:
      * - https://stackoverflow.com/questions/12695268/verify-create-update-delete-successfully-executed-in-hibernate
      * @param jwt
