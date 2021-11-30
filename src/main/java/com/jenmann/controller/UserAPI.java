@@ -14,11 +14,10 @@ import com.jenmann.auth.CognitoJWTParser;
 import com.jenmann.auth.CognitoTokenHeader;
 import com.jenmann.auth.Keys;
 import com.jenmann.auth.TokenResponse;
-import com.jenmann.entity.Characters;
-import com.jenmann.entity.Encounter;
-import com.jenmann.entity.User;
+import com.jenmann.entity.*;
 import com.jenmann.persistence.CharactersDao;
 import com.jenmann.persistence.EncounterDao;
+import com.jenmann.persistence.MonsterDao;
 import com.jenmann.persistence.UserDao;
 import com.jenmann.util.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
@@ -73,6 +72,11 @@ public class UserAPI implements PropertiesLoader {
     private CharactersDao charactersDao = new CharactersDao();
 
     /**
+     * The users API also contains an endpoint that also retrieves monster data to send to the client.
+     */
+    private MonsterDao monsterDao = new MonsterDao();
+
+    /**
      * A utility object, used for mapping POJOs to JSON strings here.
      */
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -114,6 +118,54 @@ public class UserAPI implements PropertiesLoader {
         }
 
         return Response.status(200).entity(responseJSON).build();
+    }
+
+    @GET
+    @Path("{jwt}/all")
+    @Produces("application/json")
+    public Response getAllUserData(@PathParam("jwt") String jwt) {
+        String responseJSON = "";
+
+        // Get the username
+        String username = processJWT(jwt);
+
+        if (username == null) {
+            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
+        } else {
+            // This means the user is legit
+            User user = dao.getByUsername(username);
+            if (user == null) {
+                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
+            } else {
+                // If the user exists get their encounters, characters, and monsters
+                List<Encounter> encounters = encounterDao.getByUser(user);
+                List<Characters> characters = charactersDao.getByUser(user);
+
+                /* This is slightly different because the 5E API returns different data for their /monsters endpoint
+                // than for each individual monster. This /:jwt/all endpoint only requires the name for its intended
+                 client purposes.*/
+                List<GetAllResponseItem> monsters = monsterDao.getAllMonsters().getResults();
+
+                // Format response into AllUserData entity for object mapping purposes
+                UserData userData = new UserData();
+                userData.setEncounters(encounters);
+                userData.setCharacters(characters);
+                userData.setMonsters(monsters);
+
+                try {
+                    responseJSON = objectMapper.writeValueAsString(userData);
+                } catch (Exception e) {
+                    logger.error("", e);
+                    return Response.status(404).entity("Map failed.").build();
+                }
+
+            }
+
+        }
+        int responseStatus = (responseJSON.isEmpty()) ? 404 : 200;
+
+        return Response.status(responseStatus).entity(responseJSON).build();
+
     }
 
     /**
