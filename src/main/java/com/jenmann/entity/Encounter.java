@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity(name = "Encounter")
@@ -32,23 +33,21 @@ public class Encounter {
     @JsonIgnore
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "characterEncounters")
-    private Set<Characters> encounterCharacters = new HashSet<Characters>(0);
+//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "characterEncounters")
+//    private Set<Characters> encounterCharacters = new HashSet<Characters>(0);
 
     public Encounter() {
     }
 
-    public Encounter(String title, String difficulty, Set<Characters> encounterCharacters) {
+    public Encounter(String title, String difficulty) {
         this.title = title;
         this.difficulty = difficulty;
-        this.encounterCharacters = encounterCharacters;
     }
 
-    public Encounter(int id, String title, String difficulty, Set<Characters> encounterCharacters) {
+    public Encounter(int id, String title, String difficulty) {
         this.id = id;
         this.title = title;
         this.difficulty = difficulty;
-        this.encounterCharacters = encounterCharacters;
     }
 
     public int getId() {
@@ -73,14 +72,6 @@ public class Encounter {
 
     public void setDifficulty(String difficulty) {
         this.difficulty = difficulty;
-    }
-
-    public Set<Characters> getEncounterCharacters() {
-        return encounterCharacters;
-    }
-
-    public void setEncounterCharacters(Set<Characters> encounterCharacters) {
-        this.encounterCharacters = encounterCharacters;
     }
 
     public User getUser() {

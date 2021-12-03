@@ -56,13 +56,6 @@ public class Characters {
     @JsonIgnore
     private User user;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "characters_encounters", joinColumns = {
-            @JoinColumn(name = "character_id")},
-        inverseJoinColumns = {@JoinColumn(name = "encounter_id")})
-    @JsonIgnore
-    private Set<Encounter> characterEncounters = new HashSet<Encounter>(0);
-
     /**
      * Instantiates a new Character.
      */
@@ -134,10 +127,9 @@ public class Characters {
      * @param wisdom              the wisdom
      * @param charisma            the charisma
      * @param user                the user
-     * @param characterEncounters the character encounters
      */
     public Characters(int id, String name, int level, String race, String characterClass, int strength, int dexterity,
-                      int constitution, int intelligence, int wisdom, int charisma, User user, Set<Encounter> characterEncounters) {
+                      int constitution, int intelligence, int wisdom, int charisma, User user) {
         this.id = id;
         this.name = name;
         this.level = level;
@@ -150,7 +142,6 @@ public class Characters {
         this.wisdom = wisdom;
         this.charisma = charisma;
         this.user = user;
-        this.characterEncounters = characterEncounters;
     }
 
     /**
@@ -260,24 +251,6 @@ public class Characters {
      */
     public void setUser(User user) {
         this.user = user;
-    }
-
-    /**
-     * Gets the set of encounters to which this character has been added.
-     *
-     * @return the set of encounters, the instance variable
-     */
-    public Set<Encounter> getCharacterEncounters() {
-        return characterEncounters;
-    }
-
-    /**
-     * Sets the set of encounters to which this character has been added
-     *
-     * @param characterEncounters the new set to assign to the instance variable
-     */
-    public void setCharacterEncounters(Set<Encounter> characterEncounters) {
-        this.characterEncounters = characterEncounters;
     }
 
     /**
