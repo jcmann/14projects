@@ -105,22 +105,6 @@ public class UserAPI implements PropertiesLoader {
     Keys jwks;
 
     @GET
-    @Path("username/{username}")
-    @Produces("application/json")
-    public Response getByUsername(@PathParam("username") String username) {
-        User user = dao.getByUsername(username);
-        String responseJSON = "";
-
-        try {
-            responseJSON = objectMapper.writeValueAsString(user);
-        } catch (Exception e) {
-            logger.error(e.getStackTrace()); // TODO clean up logs
-        }
-
-        return Response.status(200).entity(responseJSON).build();
-    }
-
-    @GET
     @Path("{jwt}/all")
     @Produces("application/json")
     public Response getAllUserData(@PathParam("jwt") String jwt) {
