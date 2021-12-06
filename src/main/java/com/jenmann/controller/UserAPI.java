@@ -104,6 +104,15 @@ public class UserAPI implements PropertiesLoader {
     private String POOL_ID;
     Keys jwks;
 
+    /**
+     * This endpoint is sort of tailor-made for my React frontend, which initializes all data belonging to a user
+     * when the app is first opened. Async JS makes it tricky to request several endpoints' worth of data in one
+     * handler method, so I wrote an endpoint to return all the necessary data in one go.
+     *
+     * @param jwt a JWT representing the AWS Amplify/Cognito ID Token
+     * @return If successful, a 200 and a JSON object containing all the user's characters and encounters, as well as all monsters.
+     *      Otherwise, 404s represent failures at this endpoint.
+     */
     @GET
     @Path("{jwt}/all")
     @Produces("application/json")
@@ -157,7 +166,7 @@ public class UserAPI implements PropertiesLoader {
      * associated with that user ID.
      *
      * @param jwt a JWT from the client of a user
-     * @return stringified JSON representing all encounters found
+     * @return A 200 response with stringified JSON representing all encounters found, or a 404 if any step fails.
      */
     @GET
     @Path("{jwt}/encounters")
@@ -170,12 +179,13 @@ public class UserAPI implements PropertiesLoader {
         String username = processJWT(jwt);
 
         if (username == null) {
-            // return error
+            // TODO
         } else {
             // This means the user is legit
             User user = dao.getByUsername(username);
             if (user == null) {
                 // If the user does not exist, add their record and return an appropriate message
+                // TODO
             } else {
                 // If the user exists get their encounters
                 List<Encounter> encounters = encounterDao.getByUser(user);
@@ -183,13 +193,14 @@ public class UserAPI implements PropertiesLoader {
                 try {
                     responseJSON = objectMapper.writeValueAsString(encounters);
                 } catch (Exception e) {
+                    // TODO
                     logger.error("", e);
                 }
 
             }
 
         }
-
+        // TODO check this?
         return Response.status(200).entity(responseJSON).build();
 
     }
@@ -200,7 +211,7 @@ public class UserAPI implements PropertiesLoader {
      *
      * @param jwt the ID Token JWT for the currently logged in user
      * @param body a JSON String containing all form data for the new character (except user id)
-     * @return
+     * @return a 200 response if post was successful, 404 if it failed at any point
      */
     @POST
     @Path("{jwt}/encounters")
@@ -237,6 +248,14 @@ public class UserAPI implements PropertiesLoader {
         }
     }
 
+    /**
+     * This endpoint handles all PUT requests for a user's encounter.
+     *
+     * @param jwt An AWS Amplify/Cognito ID Token for a currently logged in user
+     * @param idToUpdate The ID of the encounter to perform the update on
+     * @param body Request body should contain all data for the encounter
+     * @return An int, 1, if update was successful, or a 404 if it failed at any step
+     */
     @PUT
     @Path("{jwt}/encounters/{idToUpdate}")
     public Response editEncounter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
@@ -266,7 +285,7 @@ public class UserAPI implements PropertiesLoader {
                 }
 
                 logger.info("Update was successful");
-                return Response.status(200).entity(1).build(); // TODO making this a boolean would be cool
+                return Response.status(200).entity(1).build();
 
             }
 
@@ -274,11 +293,13 @@ public class UserAPI implements PropertiesLoader {
     }
 
     /**
+     * This endpoint handles all requests to delete a user's given encounter given an ID.
+     *
      * Sources:
      * - https://stackoverflow.com/questions/12695268/verify-create-update-delete-successfully-executed-in-hibernate
-     * @param jwt
-     * @param idToDelete
-     * @return
+     * @param jwt An AWS Cognito/Amplify ID Token for a currently signed in user
+     * @param idToDelete An ID of an encounter belonging to the user matching the JWT
+     * @return a 200 if successfully deleted, a 404 if not
      */
     @DELETE
     @Path("{jwt}/encounters/{id}")
@@ -308,7 +329,7 @@ public class UserAPI implements PropertiesLoader {
      * This endpoint expects a user ID token as a JWT, and will return the characters associated with that user.
      *
      * @param jwt the ID token for a logged in user
-     * @return stringified JSON representing all characters found belonging to the user
+     * @return A 200 response with stringified JSON representing all characters found belonging to the user, or a 404
      */
     @GET
     @Path("{jwt}/characters")
@@ -321,12 +342,12 @@ public class UserAPI implements PropertiesLoader {
         String username = processJWT(jwt);
 
         if (username == null) {
-            // return error
+            // TODO return error
         } else {
             // This means the user is legit
             User user = dao.getByUsername(username);
             if (user == null) {
-                // If the user does not exist, add their record and return an appropriate message
+                // TODO If the user does not exist, add their record and return an appropriate message
             } else {
                 // If the user exists get their encounters
                 List<Characters> characters = charactersDao.getByUser(user);
@@ -350,7 +371,7 @@ public class UserAPI implements PropertiesLoader {
      *
      * @param jwt the ID Token JWT for the currently logged in user
      * @param body a JSON String containing all form data for the new character (except user id)
-     * @return
+     * @return A 200 if successfully added, or a 404 if not
      */
     @POST
     @Path("{jwt}/characters")
@@ -387,6 +408,14 @@ public class UserAPI implements PropertiesLoader {
         }
     }
 
+    /**
+     * This endpoint handles all PUT requests to update a user's character, specified by ID.
+     *
+     * @param jwt jwt the ID Token JWT for the currently logged in user
+     * @param idToUpdate The ID for the Character to be updated
+     * @param body Stringified JSON representing all data about the character to be updated
+     * @return a 200 if the update was successful, otherwise a 404
+     */
     @PUT
     @Path("{jwt}/characters/{idToUpdate}")
     public Response editCharacter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
@@ -424,10 +453,11 @@ public class UserAPI implements PropertiesLoader {
     }
 
     /**
-     * This endpoint expects both a
-     * @param jwt
-     * @param idToDelete
-     * @return
+     * This endpoint is responsible for deleting a given character by ID that belongs to a given user.
+     *
+     * @param jwt the ID Token JWT for the currently logged in user
+     * @param idToDelete the ID of the character to delete
+     * @return a 200 response if the delete was successful, or a 404
      */
     @DELETE
     @Path("{jwt}/characters/{id}")
@@ -459,7 +489,7 @@ public class UserAPI implements PropertiesLoader {
      * the JWT provided from the client before providing any data.
      *
      * @param jwt The JWT, passed from the endpoint, to validate
-     * @return username of the validated user
+     * @return username of the validated user, or null if no validated user was found
      */
     public String processJWT(String jwt) {
         String username = null;

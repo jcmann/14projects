@@ -42,9 +42,12 @@ public class MonsterAPI {
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
-     * Sends a response containing a JSON array of all monsters provided by the 5e API
+     * Sends a response containing a JSON array of all monsters provided by the 5e API. This requires a specific
+     * format because the API returns a JSON object shaped roughly as: {count: (int), results: [{monster}, {monster}].
+     * Each monster item in the array is not a full monster object, but instead only contains the name, index,
+     * and the full API URL to request the full monster data for that monster.
      *
-     * @return all characters, sent as a JSON array
+     * @return all characters, sent as a JSON array in a 200 response
      */
     @GET
     @Produces("application/json")
@@ -62,6 +65,14 @@ public class MonsterAPI {
 
     }
 
+    /**
+     * The DND 5e API doesn't use ID numbers, but instead indexes, to uniquely identify monsters in a searchable way.
+     * The index is the full name of the monster in lower snake case. This is used to get the detailed
+     * data about a specific monster, which is not returned by getting all monsters.
+     *
+     * @param index lower snake case identifier for the monster in question
+     * @return stringified json representing a Monster object
+     */
     @GET
     @Path("{index}")
     @Produces("application/json")
@@ -71,7 +82,9 @@ public class MonsterAPI {
         try {
             responseJSON = getObjectMapper().writeValueAsString(monster);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
+            return Response.status(404).entity("Search failed.").build();
+
         }
         return Response.status(200).entity(responseJSON).build();
     }

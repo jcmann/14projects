@@ -8,47 +8,88 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The type Character.
+ * The Characters class is really supposed to be the Character class, but Character is also a significant type in Java,
+ * so I made this classname plural. Each instance represents an individual Dungeons & Dragons character. One user
+ * can have many characters.
+ *
+ * @author jcmann
  */
 @Entity(name = "Characters")
 @Table(name = "characters")
 public class Characters {
 
+    /**
+     * The auto-incrementing primary key for the characters table
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private int id;
 
+    /**
+     * The name of the character
+     */
     @Column(name = "name")
     private String name;
 
+    /**
+     * The level of the character
+     */
     @Column(name = "level")
     private int level;
 
+    /**
+     * The character's DND race -- not validated against any API, can be custom
+     */
     @Column(name = "race")
     private String race;
 
+    /**
+     * The character's class. Not validated or restricted to allow multiclassing, etc.
+     */
     @Column(name = "character_class")
     private String characterClass;
 
+    /**
+     * The character's strength stat. This can be null in the database.
+     */
     @Column(name = "strength")
     private Integer strength;
 
+    /**
+     * The character's dexterity stat. This can be null in the database.
+     */
     @Column(name = "dexterity")
     private Integer dexterity;
 
+    /**
+     * The character's constitution stat. This can be null in the database.
+     */
     @Column(name = "constitution")
     private Integer constitution;
 
+    /**
+     * The character's intelligence stat. This can be null in the database.
+     */
     @Column(name = "intelligence")
     private Integer intelligence;
 
+    /**
+     * The character's wisdom stat. This can be null in the database.
+     */
     @Column(name = "wisdom")
     private Integer wisdom;
 
+    /**
+     * The character's charisma stat. This can be null in the database.
+     */
     @Column(name = "charisma")
     private Integer charisma;
 
+    /**
+     * Each user can have many characters, and this links the two entities together via the user's ID.
+     * The character's user info is also explicitly not returned in any JSON created by these entities.
+     */
     @ManyToOne
     @JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "user_id")

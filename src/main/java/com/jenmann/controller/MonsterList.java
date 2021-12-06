@@ -12,20 +12,23 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 
 /**
- * A servlet to handle CRUD for the character list.
- * For exercise 4, intended to also forward to a JSP to display said results/searches.
- *
- * In final project, this will not return a JSP but just data.
+ * A testing/utility type class that just lists all monsters in the DND 5e API. Nothing to see here! :)
  *
  * @author jcmann
  */
-
 @WebServlet(
         urlPatterns = {"/monsters"}
 )
-
 public class MonsterList extends HttpServlet {
 
+    /**
+     * Handles a simple get request to this servlet and routes to a JSP that displays all monsters in a table
+     *
+     * @param req a general http request to this servlet
+     * @param resp our response to send back
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

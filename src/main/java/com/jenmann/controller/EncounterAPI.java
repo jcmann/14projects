@@ -80,22 +80,45 @@ public class EncounterAPI {
         return Response.status(200).entity(responseJSON).build();
     }
 
+    /**
+     * A getter for this API endpoint's dao, which is an EncounterDao
+     *
+     * @return the instance of an EncounterDao
+     */
     public EncounterDao getDao() {
         return dao;
     }
 
+    /**
+     * Setter for the dao instance variable
+     *
+     * @param dao an EncounterDao
+     */
     public void setDao(EncounterDao dao) {
         this.dao = dao;
     }
 
+    /**
+     * A getter method for the objectMapper instance variable
+     * @return the objectMapper instance variable
+     */
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
+    /**
+     * Setter method for the objectMapper instance variable
+     *
+     * @param objectMapper the instance variable objectMapper
+     */
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Returns the Log4J2 logger instance variable
+     * @return
+     */
     public Logger getLogger() {
         return logger;
     }

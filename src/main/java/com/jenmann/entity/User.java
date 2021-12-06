@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import com.jenmann.entity.Characters;
 
 /**
- * The type User.
+ * The User object
  *
  * @author jcmann
  */
@@ -17,20 +17,35 @@ import com.jenmann.entity.Characters;
 @Table(name = "users")
 public class User {
 
+    /**
+     * The auto-incrementing ID for the user table
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private int id;
 
+    /**
+     * The username, also used to log in via AWS
+     */
     @Column(name = "username")
     private String username;
 
+    /**
+     * Password field is deprecated.
+     */
     @Column(name = "password")
     private String password;
 
+    /**
+     * One user can have many characters, so the User object is able to maintain a list of its characters if needed.
+     */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Characters> charactersList = new ArrayList<>();
 
+    /**
+     * One user can have many encounters, so the User object is able to maintain a list of its encounters if needed.
+     */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Encounter> encounterList = new ArrayList<>();
 

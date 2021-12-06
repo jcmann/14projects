@@ -14,17 +14,22 @@ import java.io.IOException;
  * A servlet to handle CRUD for the character list.
  * For exercise 4, intended to also forward to a JSP to display said results/searches.
  *
- * In final project, this will not return a JSP but just data.
- *
  * @author jcmann
  */
-
 @WebServlet(
         urlPatterns = {"/characters"}
 )
-
 public class CharacterList extends HttpServlet {
 
+    /**
+     * This handles a GET request to this servlet URL. Forwards to a JSP to display characters in a table.
+     *
+     * @param req a general http request to this servlet
+     * @param resp our response to send back
+     * @throws ServletException
+     * @throws IOException
+     *
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 

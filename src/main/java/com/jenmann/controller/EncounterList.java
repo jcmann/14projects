@@ -23,6 +23,14 @@ import java.util.List;
 @WebServlet(urlPatterns = {"/encounters"})
 public class EncounterList extends HttpServlet {
 
+    /**
+     * Handles a simple get request to this servlet and routes to a JSP that displays all encounters in a table
+     *
+     * @param req a general http request to this servlet
+     * @param resp our response to send back
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
