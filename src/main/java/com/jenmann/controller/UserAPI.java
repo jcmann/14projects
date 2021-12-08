@@ -105,6 +105,74 @@ public class UserAPI implements PropertiesLoader {
     Keys jwks;
 
     /**
+     * This helper method is called by each endpoint to reduce code duplication in getting the user. If the user
+     * is validated in AWS but not found, it calls a helper method to update the database to include the user, effectively
+     * synchronizing AWS/the database.
+     *
+     * @param jwt The JWT received by the endpoint, an ID token
+     * @return null if the user was not found, or a user object if a user was found
+     */
+    public User userFetcher (String jwt) {
+        String username = processJWT(jwt);
+        User user = null;
+
+        if (username != null) {
+            // this means the JWT was valid so the user should be in the database
+            user = dao.getByUsername(username);
+
+            if (user == null) {
+                // This means the user's db record was not created yet, so fix that
+                user = createNewUser(username);
+            }
+        }
+
+        // After all that, the user will be validated + in the db, or null if they don't exist
+        return user;
+    }
+
+    /**
+     * This helper method updates the status code in the event the object mapping process failed.
+     *
+     * @param responseJSON the objectMapper's produced String, which will either be a valid object or a fail text
+     * @return the status code as an integer
+     */
+    public int determineStatusCode(String responseJSON) {
+        return (responseJSON.equals("Object mapping failed.")) ? 404 : 200;
+    }
+
+    /**
+     * This method is used to turn any passed in object into stringified JSON using the object mapper.
+     *
+     * @param objectToMap any object that needs to be run through the objectmapper
+     * @return a String of the json response after being mapped, or an error message if the objectMapper fails
+     */
+    public String jsonFormatter(Object objectToMap) {
+        String responseJSON = "";
+        try {
+            responseJSON = objectMapper.writeValueAsString(objectToMap);
+        } catch (Exception e) {
+            logger.error("", e);
+            responseJSON = "Object mapping failed.";
+        }
+
+        return responseJSON;
+
+    }
+
+    /**
+     * If a user exists in AWS, but not in the database, the user should be created, which is done in this method.
+     *
+     * @param username the username, processed out of the original jwt, of the user to create
+     * @return the User object created
+     */
+    public User createNewUser(String username) {
+        User newUser = new User();
+        newUser.setUsername(username);
+        int newUserID = dao.insert(newUser);
+        return newUser;
+    }
+
+    /**
      * This endpoint is sort of tailor-made for my React frontend, which initializes all data belonging to a user
      * when the app is first opened. Async JS makes it tricky to request several endpoints' worth of data in one
      * handler method, so I wrote an endpoint to return all the necessary data in one go.
@@ -118,46 +186,35 @@ public class UserAPI implements PropertiesLoader {
     @Produces("application/json")
     public Response getAllUserData(@PathParam("jwt") String jwt) {
         String responseJSON = "";
+        int statusCode = 0;
+        User user = null;
+        user = userFetcher(jwt);
 
-        // Get the username
-        String username = processJWT(jwt);
+        if (user != null) {
+            List<Encounter> encounters = encounterDao.getByUser(user);
+            List<Characters> characters = charactersDao.getByUser(user);
 
-        if (username == null) {
-            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
-            } else {
-                // If the user exists get their encounters, characters, and monsters
-                List<Encounter> encounters = encounterDao.getByUser(user);
-                List<Characters> characters = charactersDao.getByUser(user);
-
-                /* This is slightly different because the 5E API returns different data for their /monsters endpoint
+            /* This is slightly different because the 5E API returns different data for their /monsters endpoint
                 // than for each individual monster. This /:jwt/all endpoint only requires the name for its intended
                  client purposes.*/
-                List<GetAllResponseItem> monsters = monsterDao.getAllMonsters().getResults();
+            List<GetAllResponseItem> monsters = monsterDao.getAllMonsters().getResults();
 
-                // Format response into AllUserData entity for object mapping purposes
-                UserData userData = new UserData();
-                userData.setEncounters(encounters);
-                userData.setCharacters(characters);
-                userData.setMonsters(monsters);
+            // Format response into AllUserData entity for object mapping purposes
+            UserData userData = new UserData();
+            userData.setEncounters(encounters);
+            userData.setCharacters(characters);
+            userData.setMonsters(monsters);
 
-                try {
-                    responseJSON = objectMapper.writeValueAsString(userData);
-                } catch (Exception e) {
-                    logger.error("", e);
-                    return Response.status(404).entity("Map failed.").build();
-                }
-
-            }
-
+            // send this to the objectMapper
+            responseJSON = jsonFormatter(userData);
+            statusCode = determineStatusCode(responseJSON);
+        } else {
+            // send an error
+            responseJSON = "The user was not found.";
+            statusCode = 404;
         }
-        int responseStatus = (responseJSON.isEmpty()) ? 404 : 200;
 
-        return Response.status(responseStatus).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
@@ -497,7 +554,7 @@ public class UserAPI implements PropertiesLoader {
         loadKey();
 
         if (jwt == null) {
-            // TODO figure out error handling
+            logger.error("The JWT provided was null.");
         } else {
             try {
                 username = validate(jwt);
