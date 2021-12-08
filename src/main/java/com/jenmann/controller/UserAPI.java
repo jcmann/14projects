@@ -229,7 +229,6 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/encounters")
     @Produces("application/json")
     public Response getUserEncounters(@PathParam("jwt") String jwt) {
-
         String responseJSON = "";
         int statusCode = 0;
         User user = null;
@@ -260,35 +259,34 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/encounters")
     @Consumes("application/json")
     public Response addNewEncounter(@PathParam("jwt") String jwt,  String body) {
-        // Get the username
-        String username = processJWT(jwt);
+        String responseJSON = "";
+        int statusCode = 0;
+        User user = null;
+        user = userFetcher(jwt);
 
-        if (username == null) {
-            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
-            } else {
-                Encounter encounter = null;
-                try {
-                    encounter = objectMapper.readValue(body, Encounter.class);
-                    encounter.setUser(user);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-                int newEncounterID = encounterDao.insert(encounter);
-
-                if (newEncounterID == 0) {
-                    return Response.status(404).entity("Character could not be added.").build();
-                } else {
-                    return Response.status(200).entity("Character successfully added.").build();
-                }
-
+        if (user != null) {
+            // This means the user is validated and exists in the database, so work can be done
+            Encounter encounter = null;
+            try {
+                encounter = objectMapper.readValue(body, Encounter.class);
+                encounter.setUser(user);
+            } catch (Exception e) {
+                logger.error("", e);
             }
 
+            int newEncounterID = encounterDao.insert(encounter);
+            encounter.setId(newEncounterID); // reformat to return
+
+            responseJSON = jsonFormatter(encounter);
+            statusCode = determineStatusCode(responseJSON);
+
+        } else {
+            responseJSON = "The user was not found";
+            statusCode = 404;
         }
+
+        return Response.status(statusCode).entity(responseJSON).build();
+
     }
 
     /**
@@ -407,35 +405,33 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/characters")
     @Consumes("application/json")
     public Response addNewCharacter(@PathParam("jwt") String jwt,  String body) {
-        // Get the username
-        String username = processJWT(jwt);
+        String responseJSON = "";
+        int statusCode = 0;
+        User user = null;
+        user = userFetcher(jwt);
 
-        if (username == null) {
-            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
-            } else {
-                Characters character = null;
-                try {
-                    character = objectMapper.readValue(body, Characters.class);
-                    character.setUser(user);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-                int newCharacterId = charactersDao.insert(character);
-
-                if (newCharacterId == 0) {
-                    return Response.status(404).entity("Character could not be added.").build();
-                } else {
-                    return Response.status(200).entity("Character successfully added.").build();
-                }
-
+        if (user != null) {
+            // This means the user is validated and exists in the database, so work can be done
+            Characters character = null;
+            try {
+                character = objectMapper.readValue(body, Characters.class);
+                character.setUser(user);
+            } catch (Exception e) {
+                logger.error("", e);
             }
 
+            int newEncounterID = charactersDao.insert(character);
+            character.setId(newEncounterID); // reformat to return
+
+            responseJSON = jsonFormatter(character);
+            statusCode = determineStatusCode(responseJSON);
+
+        } else {
+            responseJSON = "The user was not found";
+            statusCode = 404;
         }
+
+        return Response.status(statusCode).entity(responseJSON).build();
     }
 
     /**
