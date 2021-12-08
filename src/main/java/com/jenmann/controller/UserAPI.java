@@ -231,34 +231,20 @@ public class UserAPI implements PropertiesLoader {
     public Response getUserEncounters(@PathParam("jwt") String jwt) {
 
         String responseJSON = "";
+        int statusCode = 0;
+        User user = null;
+        user = userFetcher(jwt);
 
-        // Get the username
-        String username = processJWT(jwt);
-
-        if (username == null) {
-            // TODO
+        if (user != null) {
+            List<Encounter> encounters = encounterDao.getByUser(user);
+            responseJSON = jsonFormatter(encounters);
+            statusCode = determineStatusCode(responseJSON);
         } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                // If the user does not exist, add their record and return an appropriate message
-                // TODO
-            } else {
-                // If the user exists get their encounters
-                List<Encounter> encounters = encounterDao.getByUser(user);
-
-                try {
-                    responseJSON = objectMapper.writeValueAsString(encounters);
-                } catch (Exception e) {
-                    // TODO
-                    logger.error("", e);
-                }
-
-            }
-
+            responseJSON = "The user was not found";
+            statusCode = 404;
         }
-        // TODO check this?
-        return Response.status(200).entity(responseJSON).build();
+
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
@@ -392,34 +378,21 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/characters")
     @Produces("application/json")
     public Response getUserCharacters(@PathParam("jwt") String jwt) {
-
         String responseJSON = "";
+        int statusCode = 0;
+        User user = null;
+        user = userFetcher(jwt);
 
-        // Get the username
-        String username = processJWT(jwt);
-
-        if (username == null) {
-            // TODO return error
+        if (user != null) {
+            List<Characters> characters = charactersDao.getByUser(user);
+            responseJSON = jsonFormatter(characters);
+            statusCode = determineStatusCode(responseJSON);
         } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                // TODO If the user does not exist, add their record and return an appropriate message
-            } else {
-                // If the user exists get their encounters
-                List<Characters> characters = charactersDao.getByUser(user);
-
-                try {
-                    responseJSON = objectMapper.writeValueAsString(characters);
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
-
-            }
-
+            responseJSON = "The user was not found";
+            statusCode = 404;
         }
 
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
     }
 
     /**
