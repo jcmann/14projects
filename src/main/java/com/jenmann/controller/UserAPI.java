@@ -306,23 +306,15 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // This means the user is validated and exists in the database, so work can be done
-            Encounter encounter = null;
+            Encounter encounter = readEncounterValue(body, user);
 
-            try {
-                encounter = objectMapper.readValue(body, Encounter.class);
-                encounter.setUser(user);
-                encounterDao.saveOrUpdate(encounter);
-            } catch (HibernateException e) {
-                responseJSON = "Failed to save or update.";
+            if (encounter == null) {
+                responseJSON = "Could not update encounter.";
                 statusCode = 404;
-                logger.info("Failed to save or update.");
-                logger.error("", e);
-            } catch (Exception e) {
-                logger.error("", e);
+            } else {
+                responseJSON = "Successfully edited encounter";
+                statusCode = 200;
             }
-
-            responseJSON = "Successfully edited encounter";
-            statusCode = 200;
 
         } else {
             responseJSON = "The user was not found.";
@@ -451,23 +443,15 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // This means the user is validated and exists in the database, so work can be done
-            Characters characterToEdit = null;
+            Characters characterToEdit = readCharacterValue(body, user);
 
-            try {
-                characterToEdit = objectMapper.readValue(body, Characters.class);
-                characterToEdit.setUser(user);
-                charactersDao.saveOrUpdate(characterToEdit);
-            } catch (HibernateException e) {
-                responseJSON = "Failed to save or update.";
+            if (characterToEdit == null) {
+                responseJSON = "Could not update encounter.";
                 statusCode = 404;
-                logger.info("Failed to save or update.");
-                logger.error("", e);
-            } catch (Exception e) {
-                logger.error("", e);
+            } else {
+                responseJSON = "Successfully edited encounter";
+                statusCode = 200;
             }
-
-            responseJSON = "Successfully edited character";
-            statusCode = 200;
 
         } else {
             responseJSON = "The user was not found.";
@@ -640,4 +624,38 @@ public class UserAPI implements PropertiesLoader {
             logger.error("", e);
         }
     }
+
+    public Encounter readEncounterValue(String body, User user) {
+        Encounter encounter = null;
+        try {
+            encounter = objectMapper.readValue(body, Encounter.class);
+            encounter.setUser(user);
+            encounterDao.saveOrUpdate(encounter);
+        } catch (HibernateException e) {
+            logger.info("Failed to save or update.");
+            logger.error("", e);
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+
+        return encounter;
+    }
+
+    public Characters readCharacterValue(String body, User user) {
+        Characters character = null;
+
+        try {
+            character = objectMapper.readValue(body, Characters.class);
+            character.setUser(user);
+            charactersDao.saveOrUpdate(character);
+        } catch (HibernateException e) {
+            logger.info("Failed to save or update.");
+            logger.error("", e);
+        } catch (Exception e) {
+            logger.error("", e);
+        }
+
+        return character;
+    }
+
 }
