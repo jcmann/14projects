@@ -306,14 +306,19 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // This means the user is validated and exists in the database, so work can be done
-            Encounter encounter = readEncounterValue(body, user);
+            Encounter encounter = null;
 
-            if (encounter == null) {
-                responseJSON = "Could not update encounter.";
-                statusCode = 404;
-            } else {
+            try {
+                encounter = objectMapper.readValue(body, Encounter.class);
+                encounter.setUser(user);
+                encounterDao.saveOrUpdate(encounter);
                 responseJSON = "Successfully edited encounter";
                 statusCode = 200;
+            } catch (Exception e) {
+                logger.error("Could not update encounter.");
+                logger.error("", e);
+                responseJSON = "Could not update encounter.";
+                statusCode = 404;
             }
 
         } else {
@@ -455,14 +460,19 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // This means the user is validated and exists in the database, so work can be done
-            Characters characterToEdit = readCharacterValue(body, user);
+            Characters characterToEdit = null;
 
-            if (characterToEdit == null) {
-                responseJSON = "Could not update encounter.";
-                statusCode = 404;
-            } else {
-                responseJSON = "Successfully edited encounter";
+            try {
+                characterToEdit = objectMapper.readValue(body, Characters.class);
+                characterToEdit.setUser(user);
+                charactersDao.saveOrUpdate(characterToEdit);
+                responseJSON = "Successfully edited character";
                 statusCode = 200;
+            } catch (Exception e) {
+                responseJSON = "Could not update character.";
+                statusCode = 404;
+                logger.error("Could not update character.");
+                logger.error("", e);
             }
 
         } else {
@@ -537,7 +547,6 @@ public class UserAPI implements PropertiesLoader {
             } catch (IOException e) {
                 logger.error("There was an IO Exception while trying to process the auth request.");
                 logger.error("", e);
-                // TODO error handling
             } catch (Exception e) {
                 logger.error("Something went wrong trying to process the auth request.");
                 logger.error("", e);
@@ -569,7 +578,6 @@ public class UserAPI implements PropertiesLoader {
         BigInteger modulus = new BigInteger(1, org.apache.commons.codec.binary.Base64.decodeBase64(jwks.getKeys().get(0).getN()));
         BigInteger exponent = new BigInteger(1, org.apache.commons.codec.binary.Base64.decodeBase64(jwks.getKeys().get(0).getE()));
 
-        // TODO the following is "happy path", what if the exceptions are caught?
         // Create a public key
         PublicKey publicKey = null;
         try {
@@ -646,39 +654,6 @@ public class UserAPI implements PropertiesLoader {
             logger.error("There was an exception loading properties...");
             logger.error("", e);
         }
-    }
-
-    public Encounter readEncounterValue(String body, User user) {
-        Encounter encounter = null;
-        try {
-            encounter = objectMapper.readValue(body, Encounter.class);
-            encounter.setUser(user);
-            encounterDao.saveOrUpdate(encounter);
-        } catch (HibernateException e) {
-            logger.info("Failed to save or update.");
-            logger.error("", e);
-        } catch (Exception e) {
-            logger.error("", e);
-        }
-
-        return encounter;
-    }
-
-    public Characters readCharacterValue(String body, User user) {
-        Characters character = null;
-
-        try {
-            character = objectMapper.readValue(body, Characters.class);
-            character.setUser(user);
-            charactersDao.saveOrUpdate(character);
-        } catch (HibernateException e) {
-            logger.info("Failed to save or update.");
-            logger.error("", e);
-        } catch (Exception e) {
-            logger.error("", e);
-        }
-
-        return character;
     }
 
 }
