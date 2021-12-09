@@ -96,14 +96,6 @@ public class CharactersDao {
         session.close();
     }
 
-    public void update(Characters character) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        session.update(character);
-        transaction.commit();
-        session.close();
-    }
-
     /**
      * Insert a new character into the database
      *
