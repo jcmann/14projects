@@ -337,24 +337,36 @@ public class UserAPI implements PropertiesLoader {
     @DELETE
     @Path("{jwt}/encounters/{id}")
     public Response deleteEncounterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+        String responseJSON = "";
+        int statusCode = 0;
+        User user = userFetcher(jwt);
 
-        // TODO implement jwt validation
+        if (user != null) {
+            // Run a select to get the encounter from the database if it exists
+            Encounter encounterToDelete = encounterDao.getById(idToDelete);
 
-        // Run a select to get the encounter from the database if it exists
-        Encounter encounterToDelete = encounterDao.getById(idToDelete);
-
-        // If the encounter is null it was not found, return a 404
-        if (encounterToDelete == null) {
-            return Response.status(404).entity("Encounter not found. Invalid ID.").build();
-        } else {
-            try {
-                encounterDao.delete(encounterToDelete);
-            } catch (HibernateException e) {
-                return Response.status(404).entity("Encounter was found, but could not be deleted").build();
+            // If the encounter is null it was not found, return a 404
+            if (encounterToDelete == null) {
+                responseJSON = "Encounter not found. Invalid ID.";
+                statusCode = 404;
+            } else {
+                try {
+                    encounterDao.delete(encounterToDelete);
+                    responseJSON = "Successfully deleted encounter.";
+                    statusCode = 200;
+                } catch (HibernateException e) {
+                    responseJSON = "Failed to delete encounter.";
+                    statusCode = 404;
+                    logger.error("Failed to delete encounter.");
+                    logger.error("", e);
+                }
             }
-
-            return Response.status(200).entity("Successfully deleted encounter.").build();
+        } else {
+            responseJSON = "Failed to delete encounter";
+            statusCode = 404;
         }
+
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
@@ -472,24 +484,35 @@ public class UserAPI implements PropertiesLoader {
     @DELETE
     @Path("{jwt}/characters/{id}")
     public Response deleteCharacterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+        String responseJSON = "";
+        int statusCode = 0;
+        User user = userFetcher(jwt);
 
-        // TODO add jwt validation
+        if (user != null) {
+            // Run a select to get the encounter from the database if it exists
+            Characters characterToDelete = charactersDao.getById(idToDelete);
 
-        // Run a select to get the encounter from the database if it exists
-        Characters characterToDelete = charactersDao.getById(idToDelete);
+            // If the encounter is null it was not found, return a 404
+            if (characterToDelete == null) {
+                responseJSON = "Character not found. Invalid ID.";
+                statusCode = 404;
+            } else {
+                try {
+                    charactersDao.delete(characterToDelete);
+                    responseJSON = "Successfully deleted character.";
+                    statusCode = 200;
+                } catch (HibernateException e) {
+                    responseJSON = "Failed to delete character.";
+                    statusCode = 404;
+                    logger.error("Failed to delete character.");
+                    logger.error("", e);
+                }
 
-        // If the encounter is null it was not found, return a 404
-        if (characterToDelete == null) {
-            return Response.status(404).entity("Character not found. Invalid ID.").build();
-        } else {
-            try {
-                charactersDao.delete(characterToDelete);
-            } catch (HibernateException e) {
-                return Response.status(404).entity("Character was found, but could not be deleted").build();
+                return Response.status(statusCode).entity(responseJSON).build();
             }
-
-            return Response.status(200).entity("Successfully deleted character.").build();
         }
+
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
