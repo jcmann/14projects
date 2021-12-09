@@ -1,5 +1,6 @@
 package com.jenmann.persistence;
 
+import com.jenmann.entity.Characters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -14,24 +15,49 @@ import java.util.List;
  * A generic DAO somewhat inspired by http://rodrigouchoa.wordpress.com
  *
  */
-
 public class GenericDao<T> {
+
+    /**
+     * The class being used for this dao
+     */
     private Class<T> type;
+
+    /**
+     * A logger utility for a Log4J2 logging system
+     */
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
      * Instantiates a new Generic dao.
      *
-     * @param type the entity type, for example, User.
+     * @param type the entity type, for example, Encounter.
      */
     public GenericDao(Class<T> type) {
         this.type = type;
     }
 
     /**
-     * Gets a entity by id
+     * Gets all entities
+     *
+     * @return the all entities
+     */
+    public List<T> getAll() {
+        Session session = getSession();
+
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+
+        CriteriaQuery<T> query = builder.createQuery(type);
+        Root<T> root = query.from(type);
+        List<T> list = session.createQuery(query).getResultList();
+        session.close();
+        return list;
+
+    }
+
+    /**
+     * Gets an entity by id
      * @param id entity id to search by
-     * @return a entity
+     * @return an entity
      */
     public <T>T getById(int id) {
         Session session = getSession();
@@ -54,21 +80,31 @@ public class GenericDao<T> {
     }
 
     /**
-     * Gets all entities
+     * Inserts the entity into the database
      *
-     * @return the all entities
+     * @param entity entity to be inserted
      */
-    public List<T> getAll() {
+    public int insert(T entity) {
+        int id = 0;
         Session session = getSession();
-
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-
-        CriteriaQuery<T> query = builder.createQuery(type);
-        Root<T> root = query.from(type);
-        List<T> list = session.createQuery(query).getResultList();
+        Transaction transaction = session.beginTransaction();
+        id = (int)session.save(entity);
+        transaction.commit();
         session.close();
-        return list;
+        return id;
+    }
 
+    /**
+     * Save or update an entity in the database
+     *
+     * @param entity the entity representing all the new data to update
+     */
+    public void saveOrUpdate(T entity) {
+        Session session = getSession();
+        Transaction transaction = session.beginTransaction();
+        session.saveOrUpdate(entity);
+        transaction.commit();
+        session.close();
     }
 
     /** Get order by property (exact match)
@@ -92,8 +128,6 @@ public class GenericDao<T> {
         session.close();
         return entities;
     }
-
-
 
     /**
      * Returns an open session from the SessionFactory
