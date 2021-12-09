@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Encounter;
 import com.jenmann.persistence.EncounterDao;
+import com.jenmann.persistence.GenericDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +26,7 @@ public class EncounterAPI {
     /**
      * Represents and handles the database connectivity for all Characters-related data
      */
-    private EncounterDao dao = new EncounterDao();
+    private GenericDao dao = new GenericDao<Encounter>(Encounter.class);
 
     /**
      * A utility object, used for mapping POJOs to JSON strings here.
@@ -45,7 +46,7 @@ public class EncounterAPI {
     @GET
     @Produces("application/json")
     public Response getAllEncounters() {
-        List<Encounter> allCharacters = dao.getAllEncounters();
+        List<Encounter> allCharacters = dao.getAll();
         String responseJSON = "";
 
         try {
@@ -67,7 +68,7 @@ public class EncounterAPI {
     @Path("{id}")
     @Produces("application/json")
     public Response getEncounterByID(@PathParam("id") int id) {
-        Encounter encounter = getDao().getById(id);
+        Encounter encounter = (Encounter) getDao().getById(id);
         String responseJSON = "";
 
         try {
@@ -85,17 +86,8 @@ public class EncounterAPI {
      *
      * @return the instance of an EncounterDao
      */
-    public EncounterDao getDao() {
+    public GenericDao getDao() {
         return dao;
-    }
-
-    /**
-     * Setter for the dao instance variable
-     *
-     * @param dao an EncounterDao
-     */
-    public void setDao(EncounterDao dao) {
-        this.dao = dao;
     }
 
     /**
