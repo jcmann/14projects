@@ -15,10 +15,7 @@ import com.jenmann.auth.CognitoTokenHeader;
 import com.jenmann.auth.Keys;
 import com.jenmann.auth.TokenResponse;
 import com.jenmann.entity.*;
-import com.jenmann.persistence.CharactersDao;
-import com.jenmann.persistence.EncounterDao;
-import com.jenmann.persistence.MonsterDao;
-import com.jenmann.persistence.UserDao;
+import com.jenmann.persistence.*;
 import com.jenmann.util.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -59,17 +56,17 @@ public class UserAPI implements PropertiesLoader {
     /**
      * Represents and handles the database connectivity for all User-related data
      */
-    private UserDao dao = new UserDao();
+    private GenericDao dao = new GenericDao<User>(User.class);
 
     /**
      * Users are associated with encounters, so the API contains a DAO for this.
      */
-    private EncounterDao encounterDao = new EncounterDao();
+    private GenericDao encounterDao = new GenericDao<Encounter>(Encounter.class);
 
     /**
      * Users are associated with characters, so the API contains a DAO for this.
      */
-    private CharactersDao charactersDao = new CharactersDao();
+    private GenericDao charactersDao = new GenericDao<Characters>(Characters.class);
 
     /**
      * The users API also contains an endpoint that also retrieves monster data to send to the client.
@@ -348,7 +345,7 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // Run a select to get the encounter from the database if it exists
-            Encounter encounterToDelete = encounterDao.getById(idToDelete);
+            Encounter encounterToDelete = (Encounter) encounterDao.getByPropertyEqual("id", idToDelete).get(0);
 
             // If the encounter is null it was not found, return a 404
             if (encounterToDelete == null) {
@@ -500,7 +497,7 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // Run a select to get the encounter from the database if it exists
-            Characters characterToDelete = charactersDao.getById(idToDelete);
+            Characters characterToDelete = (Characters) charactersDao.getByPropertyEqual("id", idToDelete).get(0);
 
             // If the encounter is null it was not found, return a 404
             if (characterToDelete == null) {

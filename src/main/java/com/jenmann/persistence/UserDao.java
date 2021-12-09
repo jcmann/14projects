@@ -49,9 +49,9 @@ public class UserDao {
         Root<User> root = query.from(User.class);
         Expression<String> propertyPath = root.get("username");
         query.where(builder.equal(propertyPath, username));
-        User president = session.createQuery(query).uniqueResult();
+        User user = session.createQuery(query).uniqueResult();
         session.close();
-        return president;
+        return user;
     }
 
     public void saveOrUpdate(User user) {

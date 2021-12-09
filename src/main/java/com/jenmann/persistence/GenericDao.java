@@ -1,6 +1,8 @@
 package com.jenmann.persistence;
 
 import com.jenmann.entity.Characters;
+import com.jenmann.entity.Encounter;
+import com.jenmann.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
@@ -8,6 +10,7 @@ import org.hibernate.Transaction;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
@@ -107,6 +110,26 @@ public class GenericDao<T> {
         session.close();
     }
 
+    /**
+     * A not very genericized method specifically for when this GenericDao is working
+     * with the User class. Retrieves
+     * @param username
+     * @return
+     */
+    public User getByUsername(String username) {
+        Session session = getSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<User> query = builder.createQuery(User.class);
+        Root<User> root = query.from(User.class);
+        Expression<String> propertyPath = root.get("username");
+        query.where(builder.equal(propertyPath, username));
+        User user = session.createQuery(query).uniqueResult();
+        session.close();
+        return user;
+    }
+
+
+
     /** Get order by property (exact match)
      * sample usage: getByPropertyEqual("lastName", "Curry")
      *
@@ -116,9 +139,6 @@ public class GenericDao<T> {
      */
     public List<T> getByPropertyEqual(String propertyName, String value) {
         Session session = getSession();
-
-        logger.debug("Searching for order with " + propertyName + " = " + value);
-
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery( type );
         Root<T> root = query.from(type );
@@ -128,6 +148,43 @@ public class GenericDao<T> {
         session.close();
         return entities;
     }
+
+    public List<T> getByPropertyEqual(String propertyName, int value) {
+        Session session = getSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> query = builder.createQuery( type );
+        Root<T> root = query.from(type );
+        query.select(root).where(builder.equal(root.get(propertyName), value));
+        List<T> entities = session.createQuery( query ).getResultList();
+
+        session.close();
+        return entities;
+    }
+
+    public List<T> getByUser(User user) {
+        Session session = getSession();
+        CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<T> query = builder.createQuery(type);
+        Root<T> root = query.from(type);
+        query.select(root).where(builder.equal(root.get("user"), user));
+        List<T> entities = session.createQuery(query).getResultList();
+        session.close();
+
+        return entities;
+    }
+
+
+//    public List<T> getByUserID(int userID) {
+//        Session session = getSession();
+//        CriteriaBuilder builder = session.getCriteriaBuilder();
+//        CriteriaQuery<Encounter> query = builder.createQuery(type);
+//        Root<Encounter> root = query.from(Encounter.class);
+//        query.select(root).where(builder.equal(root.get("user_id"), userId));
+//        List<Encounter> encounters = session.createQuery(query).getResultList();
+//        session.close();
+//
+//        return encounters;
+//    }
 
     /**
      * Returns an open session from the SessionFactory
