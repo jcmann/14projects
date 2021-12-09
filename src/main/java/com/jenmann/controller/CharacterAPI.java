@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Characters;
 import com.jenmann.persistence.CharactersDao;
+import com.jenmann.persistence.GenericDao;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,7 +26,7 @@ public class CharacterAPI {
     /**
      * Represents and handles the database connectivity for all Characters-related data
      */
-    private CharactersDao dao = new CharactersDao();
+    private GenericDao dao = new GenericDao<Characters>(Characters.class);
 
     /**
      * A utility object, used for mapping POJOs to JSON strings here.
@@ -45,7 +46,7 @@ public class CharacterAPI {
     @GET
     @Produces("application/json")
     public Response getAllCharacters() {
-        List<Characters> allCharacters = getDao().getAllCharacters();
+        List<Characters> allCharacters = getDao().getAll();
         String responseJSON = "";
 
         try {
@@ -69,7 +70,7 @@ public class CharacterAPI {
     @Produces("application/json")
     public Response getCharacterByID(@PathParam("id") int id) {
 
-        Characters character = getDao().getById(id);
+        Characters character = (Characters) getDao().getById(id);
         String responseJSON = "";
 
         try {
@@ -87,7 +88,7 @@ public class CharacterAPI {
      *
      * @return charactersDao instance variable for database work
      */
-    public CharactersDao getDao() {
+    public GenericDao getDao() {
         return dao;
     }
 
