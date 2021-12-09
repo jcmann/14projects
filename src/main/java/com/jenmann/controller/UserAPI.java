@@ -300,37 +300,37 @@ public class UserAPI implements PropertiesLoader {
     @PUT
     @Path("{jwt}/encounters/{idToUpdate}")
     public Response editEncounter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
-        logger.info("Beginning editEncounter endpoint");
-        String username = processJWT(jwt);
-        if (username == null) {
-            logger.info("User could not be parsed, so encounter was not added.");
-            return Response.status(404).entity("User could not be parsed, so encounter was not added.").build();
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                logger.info("User could not be found in the database, so encounter was not added.");
-                return Response.status(404).entity("User could not be found in the database, so encounter was not added.").build();
-            } else {
-                Encounter encounter = null;
-                try {
-                    encounter = objectMapper.readValue(body, Encounter.class);
-                    encounter.setUser(user);
-                    encounterDao.saveOrUpdate(encounter);
-                } catch (HibernateException e) {
-                    logger.error("", e);
-                    logger.info("Failed to save or update.");
-                    return Response.status(404).entity("Failed to save or update.").build();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
+        String responseJSON = "";
+        int statusCode = 0;
+        User user = userFetcher(jwt);
 
-                logger.info("Update was successful");
-                return Response.status(200).entity(1).build();
+        if (user != null) {
+            // This means the user is validated and exists in the database, so work can be done
+            Encounter encounter = null;
 
+            try {
+                encounter = objectMapper.readValue(body, Encounter.class);
+                encounter.setUser(user);
+                encounterDao.saveOrUpdate(encounter);
+            } catch (HibernateException e) {
+                responseJSON = "Failed to save or update.";
+                statusCode = 404;
+                logger.info("Failed to save or update.");
+                logger.error("", e);
+            } catch (Exception e) {
+                logger.error("", e);
             }
 
+            responseJSON = "Successfully edited encounter";
+            statusCode = 200;
+
+        } else {
+            responseJSON = "The user was not found.";
+            statusCode = 404;
         }
+
+        return Response.status(statusCode).entity(responseJSON).build();
+
     }
 
     /**
@@ -445,37 +445,37 @@ public class UserAPI implements PropertiesLoader {
     @PUT
     @Path("{jwt}/characters/{idToUpdate}")
     public Response editCharacter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
-        logger.info("Beginning editCharacter endpoint");
-        String username = processJWT(jwt);
-        if (username == null) {
-            logger.info("User could not be parsed, so character was not added.");
-            return Response.status(404).entity("User could not be parsed, so character was not added.").build();
-        } else {
-            // This means the user is legit
-            User user = dao.getByUsername(username);
-            if (user == null) {
-                logger.info("User could not be found in the database, so character was not added.");
-                return Response.status(404).entity("User could not be found in the database, so character was not added.").build();
-            } else {
-                Characters character = null;
-                try {
-                    character = objectMapper.readValue(body, Characters.class);
-                    character.setUser(user);
-                    charactersDao.saveOrUpdate(character);
-                } catch (HibernateException e) {
-                    logger.error("", e);
-                    logger.info("Failed to save or update.");
-                    return Response.status(404).entity("Failed to save or update.").build();
-                } catch (Exception e) {
-                    logger.error("", e);
-                }
+        String responseJSON = "";
+        int statusCode = 0;
+        User user = userFetcher(jwt);
 
-                logger.info("Update was successful");
-                return Response.status(200).entity(1).build(); // TODO making this a boolean would be cool
+        if (user != null) {
+            // This means the user is validated and exists in the database, so work can be done
+            Characters characterToEdit = null;
 
+            try {
+                characterToEdit = objectMapper.readValue(body, Characters.class);
+                characterToEdit.setUser(user);
+                charactersDao.saveOrUpdate(characterToEdit);
+            } catch (HibernateException e) {
+                responseJSON = "Failed to save or update.";
+                statusCode = 404;
+                logger.info("Failed to save or update.");
+                logger.error("", e);
+            } catch (Exception e) {
+                logger.error("", e);
             }
 
+            responseJSON = "Successfully edited character";
+            statusCode = 200;
+
+        } else {
+            responseJSON = "The user was not found.";
+            statusCode = 404;
         }
+
+        return Response.status(statusCode).entity(responseJSON).build();
+
     }
 
     /**
