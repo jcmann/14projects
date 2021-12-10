@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserDaoTest {
 
-    UserDao dao;
+    GenericDao dao;
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
@@ -23,7 +23,7 @@ public class UserDaoTest {
     @BeforeEach
     void setUp() {
         logger.info("Starting new UserDao Test.");
-        dao = new UserDao();
+        dao = new GenericDao<User>(User.class);
 
         Database database = Database.getInstance();
         database.runSQL("cleandb.sql");
@@ -35,7 +35,7 @@ public class UserDaoTest {
     @Test
     public void getAllUsersSuccess() {
         logger.info("In test: getAllUsersSuccess.");
-        List<User> users = dao.getAllUsers();
+        List<User> users = dao.getAll();
         assertEquals(3, users.size());
     }
 
@@ -48,7 +48,7 @@ public class UserDaoTest {
         User newUser = new User("user4");
         int id = dao.insert(newUser);
         assertNotEquals(0,id);
-        User insertedUser = dao.getById(id);
+        User insertedUser = (User) dao.getById(id);
         assertEquals("user4", insertedUser.getUsername());
     }
 
@@ -58,10 +58,10 @@ public class UserDaoTest {
     @Test
     public void updateUserSuccess() {
         logger.info("In test: updateUserSuccess.");
-        User userToUpdate = dao.getById(1);
+        User userToUpdate = (User) dao.getById(1);
         dao.saveOrUpdate(userToUpdate);
 
-        User resultingUser = dao.getById(1);
+        User resultingUser = (User) dao.getById(1);
     }
 
     /**
@@ -71,7 +71,7 @@ public class UserDaoTest {
     public void deleteUserWithoutCharactersSuccess() {
         logger.info("In test: deleteUserWithoutCharactersSuccess.");
         int idToDelete = 2;
-        User userToDelete = dao.getById(idToDelete);
+        User userToDelete = (User) dao.getById(idToDelete);
         dao.delete(userToDelete);
 
         assertNull(dao.getById(idToDelete));
@@ -86,7 +86,7 @@ public class UserDaoTest {
     public void deleteUserWithCharactersSuccess() {
         logger.info("In test: deleteUserWithCharactersSuccess.");
         int idToDelete = 3;
-        User userToDelete = dao.getById(idToDelete);
+        User userToDelete = (User) dao.getById(idToDelete);
 
         // Confirm characters exist belonging to this user
         CharactersDao charDao = new CharactersDao();
