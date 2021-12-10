@@ -89,7 +89,7 @@ public class UserDaoTest {
         User userToDelete = (User) dao.getById(idToDelete);
 
         // Confirm characters exist belonging to this user
-        CharactersDao charDao = new CharactersDao();
+        GenericDao charDao = new GenericDao<Characters>(Characters.class);
         List<Characters> characters = charDao.getByUser(userToDelete);
         assertEquals(1, characters.size());
 

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Characters;
 import com.jenmann.entity.GetAllResponse;
 import com.jenmann.entity.Monster;
-import com.jenmann.persistence.CharactersDao;
 import com.jenmann.persistence.MonsterDao;
 import com.jenmann.util.APIFormatUtility;
 import org.apache.logging.log4j.LogManager;
