@@ -115,4 +115,17 @@ public class CharactersDaoTest {
         assertNull(dao.getById(idToDelete));
     }
 
+    /**
+     * This tests the getByPropertyEquals method to verify the characters table can be searched
+     * by name
+     */
+    @Test
+    public void getByNameSuccess() {
+        logger.info("In test: getByNameSuccess");
+        String name = "Rigby";
+        Characters character = (Characters) dao.getByPropertyEqual("name", name).get(0);
+        assertNotNull(character);
+        assertEquals(name, character.getName());
+    }
+
 }

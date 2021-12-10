@@ -112,7 +112,7 @@ public class GenericDao<T> {
 
     /**
      * A not very genericized method specifically for when this GenericDao is working
-     * with the User class. Retrieves
+     * with the User class. Retrieves a User by their username.
      * @param username
      * @return
      */
@@ -133,23 +133,13 @@ public class GenericDao<T> {
     /** Get order by property (exact match)
      * sample usage: getByPropertyEqual("lastName", "Curry")
      *
+     * This is not actually used in this project, but felt helpful to add
+     *
      * @param propertyName entity property to search by
      * @param value value of the property to search for
      * @return list of orders meeting the criteria search
      */
     public List<T> getByPropertyEqual(String propertyName, String value) {
-        Session session = getSession();
-        CriteriaBuilder builder = session.getCriteriaBuilder();
-        CriteriaQuery<T> query = builder.createQuery( type );
-        Root<T> root = query.from(type );
-        query.select(root).where(builder.equal(root.get(propertyName), value));
-        List<T> entities = session.createQuery( query ).getResultList();
-
-        session.close();
-        return entities;
-    }
-
-    public List<T> getByPropertyEqual(String propertyName, int value) {
         Session session = getSession();
         CriteriaBuilder builder = session.getCriteriaBuilder();
         CriteriaQuery<T> query = builder.createQuery( type );
@@ -172,19 +162,6 @@ public class GenericDao<T> {
 
         return entities;
     }
-
-
-//    public List<T> getByUserID(int userID) {
-//        Session session = getSession();
-//        CriteriaBuilder builder = session.getCriteriaBuilder();
-//        CriteriaQuery<Encounter> query = builder.createQuery(type);
-//        Root<Encounter> root = query.from(Encounter.class);
-//        query.select(root).where(builder.equal(root.get("user_id"), userId));
-//        List<Encounter> encounters = session.createQuery(query).getResultList();
-//        session.close();
-//
-//        return encounters;
-//    }
 
     /**
      * Returns an open session from the SessionFactory
