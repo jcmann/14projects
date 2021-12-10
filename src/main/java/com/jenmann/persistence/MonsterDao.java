@@ -1,33 +1,37 @@
 package com.jenmann.persistence;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Monster;
 import com.jenmann.entity.GetAllResponse;
-import com.jenmann.entity.GetAllResponseItem;
-import com.jenmann.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
-import javax.persistence.criteria.Root;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * This DAO specifically handles the retrieval of monster data from the DND API. This didn't really work
+ * with the generic dao because it has two very specific, very not-database-based methods.
+ *
+ * @author jcmann
+ */
 public class MonsterDao {
 
+    /**
+     * A Log4J2 logger
+     */
     private final Logger logger = LogManager.getLogger(this.getClass());
-    SessionFactory sessionFactory = SessionFactoryProvider.getSessionFactory();
 
+    /**
+     * The DND 5e API's generic endpoints that fetch all of a certain type of object do not just return
+     * a collection of those objects. They return a JSON object with a count property, and a results property. So,
+     * this DAO's getAll method returns a GetAllResponse object to allow the developer to use both pieces
+     * of data if needed -- even though in this app, only the results are used.
+     *
+     * @return a GetAllResponseItem with all the data returned from the monsters endpoint
+     */
     public GetAllResponse getAllMonsters() {
         logger.info("Getting all monsters...");
         Client client = ClientBuilder.newClient();
@@ -40,7 +44,7 @@ public class MonsterDao {
         try {
             gar = mapper.readValue(response, GetAllResponse.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("", e);
         }
 
         return gar;
@@ -64,7 +68,7 @@ public class MonsterDao {
         try {
             monster = mapper.readValue(response, Monster.class);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return monster;
