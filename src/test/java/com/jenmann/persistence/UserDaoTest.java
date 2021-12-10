@@ -12,13 +12,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * This test suite tests the User class using a generic dao
+ *
+ * @author jcmann
+ */
 public class UserDaoTest {
 
+    /**
+     * A generic dao initialized to a user dao before each test
+     */
     GenericDao dao;
+
+    /**
+     * A Log4J2 logger.
+     */
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
-     * Creating the dao.
+     * Creates the dao and runs the sql reset script before each test
      */
     @BeforeEach
     void setUp() {
@@ -40,6 +52,19 @@ public class UserDaoTest {
     }
 
     /**
+     * The generic dao has a method to get a User object based on username, specifically
+     * for when it's used for the User class. This verifies that it works.
+     */
+    @Test
+    public void getUserByUsernameSuccess() {
+        logger.info("In test: getUserByUsernameSuccess.");
+        String username = "user1";
+        User user = dao.getByUsername(username);
+
+        assertNotNull(user);
+    }
+
+    /**
      * Confirms that new users are properly inserted into the table
      */
     @Test
@@ -53,15 +78,22 @@ public class UserDaoTest {
     }
 
     /**
-     * Confirms that a user entry can be updated
+     * Confirms that a user entry can be updated. There probably
+     * isn't a use-case for this, but just in case it's here.
      */
     @Test
     public void updateUserSuccess() {
         logger.info("In test: updateUserSuccess.");
         User userToUpdate = (User) dao.getById(1);
-        dao.saveOrUpdate(userToUpdate);
+        String originalUsername = userToUpdate.getUsername();
+        String newUsername = "newUsername";
 
+        userToUpdate.setUsername(newUsername);
+
+        dao.saveOrUpdate(userToUpdate);
         User resultingUser = (User) dao.getById(1);
+        assertNotNull(resultingUser);
+        assertNotEquals(originalUsername, resultingUser.getUsername());
     }
 
     /**
