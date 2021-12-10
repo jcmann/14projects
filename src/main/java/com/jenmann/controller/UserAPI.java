@@ -345,7 +345,7 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // Run a select to get the encounter from the database if it exists
-            Encounter encounterToDelete = (Encounter) encounterDao.getByPropertyEqual("id", idToDelete).get(0);
+            Encounter encounterToDelete = (Encounter) encounterDao.getById(idToDelete);
 
             // If the encounter is null it was not found, return a 404
             if (encounterToDelete == null) {
@@ -497,7 +497,7 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             // Run a select to get the encounter from the database if it exists
-            Characters characterToDelete = (Characters) charactersDao.getByPropertyEqual("id", idToDelete).get(0);
+            Characters characterToDelete = (Characters) charactersDao.getById(idToDelete);
 
             // If the encounter is null it was not found, return a 404
             if (characterToDelete == null) {
