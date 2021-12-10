@@ -32,12 +32,6 @@ public class User {
     private String username;
 
     /**
-     * Password field is deprecated.
-     */
-    @Column(name = "password")
-    private String password;
-
-    /**
      * One user can have many characters, so the User object is able to maintain a list of its characters if needed.
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -59,11 +53,9 @@ public class User {
      * Instantiates a new User.
      *
      * @param username the username
-     * @param password the password
      */
-    public User(String username, String password) {
+    public User(String username) {
         this.username = username;
-        this.password = password;
     }
 
     /**
@@ -71,12 +63,10 @@ public class User {
      *
      * @param id       the id
      * @param username the username
-     * @param password the password
      */
     public User(int id, String username, String password) {
         this.id = id;
         this.username = username;
-        this.password = password;
     }
 
     /**
@@ -115,21 +105,4 @@ public class User {
         this.username = username;
     }
 
-    /**
-     * Gets password.
-     *
-     * @return the password
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Sets password.
-     *
-     * @param password the password
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

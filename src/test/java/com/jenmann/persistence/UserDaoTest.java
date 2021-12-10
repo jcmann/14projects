@@ -45,7 +45,7 @@ public class UserDaoTest {
     @Test
     public void insertNewUserSuccess() {
         logger.info("In test: InsertNewUserSuccess.");
-        User newUser = new User("user4", "pass4");
+        User newUser = new User("user4");
         int id = dao.insert(newUser);
         assertNotEquals(0,id);
         User insertedUser = dao.getById(id);
@@ -58,13 +58,10 @@ public class UserDaoTest {
     @Test
     public void updateUserSuccess() {
         logger.info("In test: updateUserSuccess.");
-        String newPassword = "newPassword";
         User userToUpdate = dao.getById(1);
-        userToUpdate.setPassword(newPassword);
         dao.saveOrUpdate(userToUpdate);
 
         User resultingUser = dao.getById(1);
-        assertEquals(newPassword, resultingUser.getPassword());
     }
 
     /**

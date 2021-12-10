@@ -1,11 +1,11 @@
 delete from users;
 alter table users auto_increment = 1;
-insert into users (username, password)
-    values("user1", "pass1");
-insert into users (username, password)
-    values("user2", "pass2");
-insert into users (username, password)
-    values("user3", "pass3");
+insert into users (username)
+    values("user1");
+insert into users (username)
+    values("user2");
+insert into users (username)
+    values("user3");
 
 delete from characters;
 ALTER TABLE characters AUTO_INCREMENT = 1;
