@@ -60,8 +60,8 @@ public class CharactersDaoTest {
     public void getCharactersByUserId() {
         logger.info("In test: getCharactersByUserId.");
         int userId = 1;
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(1);
+        GenericDao userDao = new GenericDao<User>(User.class);
+        User user = (User) userDao.getById(1);
 
         List<Characters> chars = dao.getByUser(user);
 
@@ -76,8 +76,8 @@ public class CharactersDaoTest {
     public void insertNewCharacterSuccess() {
         logger.info("In test: insertNewCharacterSuccess.");
         // Get user
-        UserDao userDao = new UserDao();
-        User user = userDao.getById(1);
+        GenericDao userDao = new GenericDao<User>(User.class);
+        User user = (User) userDao.getById(1);
 
         Characters newChar = new Characters("Mozzy", 5, "Doggo", "Paladin", user);
         int id = dao.insert(newChar);
