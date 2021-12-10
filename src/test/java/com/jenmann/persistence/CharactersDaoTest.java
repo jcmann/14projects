@@ -12,18 +12,32 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
+/**
+ * This test suite utilizes the generic DAO to test all functionality
+ * related to the characters database table
+ *
+ * @author jcmann
+ */
 public class CharactersDaoTest {
 
-    CharactersDao dao;
+    /**
+     * A generic dao object that's initialized to a fresh character dao
+     * before each test.
+     */
+    GenericDao dao;
+
+    /**
+     * A Log4J2 logger.
+     */
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
-     * Creating the dao.
+     * Creates the dao and cleans the test database before each test.
      */
     @BeforeEach
     void setUp() {
         logger.info("Starting new CharactersDao Test.");
-        dao = new CharactersDao();
+        dao = new GenericDao<Characters>(Characters.class);
 
         Database database = Database.getInstance();
         database.runSQL("cleandb.sql");
@@ -35,7 +49,7 @@ public class CharactersDaoTest {
     @Test
     public void getAllCharactersSuccess() {
         logger.info("In test: getAllCharactersSuccess.");
-        List<Characters> characters = dao.getAllCharacters();
+        List characters = dao.getAll();
         assertEquals(3, characters.size());
     }
 
@@ -68,7 +82,7 @@ public class CharactersDaoTest {
         Characters newChar = new Characters("Mozzy", 5, "Doggo", "Paladin", user);
         int id = dao.insert(newChar);
         assertNotEquals(0,id);
-        Characters insertedChar = dao.getById(id);
+        Characters insertedChar = (Characters) dao.getById(id);
         assertEquals("Mozzy", insertedChar.getName());
     }
 
@@ -79,11 +93,11 @@ public class CharactersDaoTest {
     public void updateCharacterSuccess() {
         logger.info("In test: updateCharacterSuccess.");
         int newLevel = 10;
-        Characters charToUpdate = dao.getById(1);
+        Characters charToUpdate = (Characters) dao.getById(1);
         charToUpdate.setLevel(newLevel);
         dao.saveOrUpdate(charToUpdate);
 
-        Characters resultingCharacter = dao.getById(1);
+        Characters resultingCharacter = (Characters) dao.getById(1);
         assertEquals(newLevel, resultingCharacter.getLevel());
 
     }
@@ -95,7 +109,7 @@ public class CharactersDaoTest {
     public void deleteCharacterSuccess() {
         logger.info("In test: deleteCharacterSuccess.");
         int idToDelete = 1;
-        Characters charToDelete = dao.getById(idToDelete);
+        Characters charToDelete = (Characters) dao.getById(idToDelete);
         dao.delete(charToDelete);
 
         assertNull(dao.getById(idToDelete));
