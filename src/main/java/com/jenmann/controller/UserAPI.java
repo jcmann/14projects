@@ -16,6 +16,7 @@ import com.jenmann.auth.Keys;
 import com.jenmann.auth.TokenResponse;
 import com.jenmann.entity.*;
 import com.jenmann.persistence.*;
+import com.jenmann.util.APIFormatUtility;
 import com.jenmann.util.PropertiesLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -88,6 +89,8 @@ public class UserAPI implements PropertiesLoader {
      */
     private Properties properties;
 
+    private APIFormatUtility formatUtility = new APIFormatUtility();
+
     /**
      * The following are all instance variables to be filled in via cognito.properties as it's fed into the
      * properties instance variable, and a laodKeys method for jwks.
@@ -147,18 +150,18 @@ public class UserAPI implements PropertiesLoader {
      * @param objectToMap any object that needs to be run through the objectmapper
      * @return a String of the json response after being mapped, or an error message if the objectMapper fails
      */
-    public String jsonFormatter(Object objectToMap) {
-        String responseJSON = "";
-        try {
-            responseJSON = objectMapper.writeValueAsString(objectToMap);
-        } catch (Exception e) {
-            logger.error("", e);
-            responseJSON = "Object mapping failed.";
-        }
-
-        return responseJSON;
-
-    }
+//    public String jsonFormatter(Object objectToMap) {
+//        String responseJSON = "";
+//        try {
+//            responseJSON = objectMapper.writeValueAsString(objectToMap);
+//        } catch (Exception e) {
+//            logger.error("", e);
+//            responseJSON = "Object mapping failed.";
+//        }
+//
+//        return responseJSON;
+//
+//    }
 
     /**
      * If a user exists in AWS, but not in the database, the user should be created, which is done in this method.
@@ -210,7 +213,7 @@ public class UserAPI implements PropertiesLoader {
             userData.setMonsters(monsters);
 
             // send this to the objectMapper
-            responseJSON = jsonFormatter(userData);
+            responseJSON = formatUtility.jsonFormatter(userData);
             statusCode = determineStatusCode(responseJSON);
         } else {
             // send an error
@@ -241,7 +244,7 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             List<Encounter> encounters = encounterDao.getByUser(user);
-            responseJSON = jsonFormatter(encounters);
+            responseJSON = formatUtility.jsonFormatter(encounters);
             statusCode = determineStatusCode(responseJSON);
         } else {
             responseJSON = "The user was not found";
@@ -284,7 +287,7 @@ public class UserAPI implements PropertiesLoader {
             int newEncounterID = encounterDao.insert(encounter);
             encounter.setId(newEncounterID); // reformat to return
 
-            responseJSON = jsonFormatter(encounter);
+            responseJSON = formatUtility.jsonFormatter(encounter);
             statusCode = determineStatusCode(responseJSON);
 
         } else {
@@ -405,7 +408,7 @@ public class UserAPI implements PropertiesLoader {
 
         if (user != null) {
             List<Characters> characters = charactersDao.getByUser(user);
-            responseJSON = jsonFormatter(characters);
+            responseJSON = formatUtility.jsonFormatter(characters);
             statusCode = determineStatusCode(responseJSON);
         } else {
             responseJSON = "The user was not found";
@@ -447,7 +450,7 @@ public class UserAPI implements PropertiesLoader {
             int newEncounterID = charactersDao.insert(character);
             character.setId(newEncounterID); // reformat to return
 
-            responseJSON = jsonFormatter(character);
+            responseJSON = formatUtility.jsonFormatter(character);
             statusCode = determineStatusCode(responseJSON);
 
         } else {
