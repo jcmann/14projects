@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Encounter;
 import com.jenmann.persistence.GenericDao;
+import com.jenmann.util.APIFormatUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,11 @@ public class EncounterAPI {
      * Log4J2 instance for all logging.
      */
     private final Logger logger = LogManager.getLogger(this.getClass());
+
+    /**
+     * A utility to standardize how objects are mapped in the API. Handles object mapping.
+     */
+    private APIFormatUtility formatUtility = new APIFormatUtility();
 
     /**
      * This endpoint returns all encounters in the database.
@@ -71,15 +77,16 @@ public class EncounterAPI {
         logger.info("Received request to getEncounterByID() in Encounter API.");
         Encounter encounter = (Encounter) getDao().getById(id);
         String responseJSON = "";
+        int statusCode = 0;
 
         try {
-            responseJSON = getObjectMapper().writeValueAsString(encounter);
+            responseJSON = formatUtility.jsonFormatter(encounter);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } catch (Exception e) {
             logger.error("", e);
         }
 
-        // TODO conditionally render to make sure null is a 500 or something
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
     }
 
     /**

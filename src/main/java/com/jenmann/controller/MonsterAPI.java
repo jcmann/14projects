@@ -41,6 +41,11 @@ public class MonsterAPI {
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
+     * A utility to standardize how objects are mapped in the API. Handles object mapping.
+     */
+    private APIFormatUtility formatUtility = new APIFormatUtility();
+
+    /**
      * Sends a response containing a JSON array of all monsters provided by the 5e API. This requires a specific
      * format because the API returns a JSON object shaped roughly as: {count: (int), results: [{monster}, {monster}].
      * Each monster item in the array is not a full monster object, but instead only contains the name, index,
@@ -54,14 +59,16 @@ public class MonsterAPI {
         logger.info("Received request to getAllMonsters() in Monster API.");
         GetAllResponse allMonsters = getDao().getAllMonsters();
         String responseJSON = "";
+        int statusCode = 0;
 
         try {
-            responseJSON = getObjectMapper().writeValueAsString(allMonsters.getResults());
+            responseJSON = formatUtility.jsonFormatter(allMonsters.getResults());
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } catch (Exception e) {
             logger.error("", e);
         }
 
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
@@ -80,14 +87,16 @@ public class MonsterAPI {
         logger.info("Received request to getMonsterByIndex() in Monster API.");
         Monster monster = getDao().getMonsterByIndex(index);
         String responseJSON = "";
+        int statusCode = 0;
         try {
-            responseJSON = getObjectMapper().writeValueAsString(monster);
+            responseJSON = formatUtility.jsonFormatter(monster);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } catch (Exception e) {
             logger.error("", e);
             return Response.status(404).entity("Search failed.").build();
 
         }
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
     }
 
     /**

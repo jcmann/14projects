@@ -145,25 +145,6 @@ public class UserAPI implements PropertiesLoader {
     }
 
     /**
-     * This method is used to turn any passed in object into stringified JSON using the object mapper.
-     *
-     * @param objectToMap any object that needs to be run through the objectmapper
-     * @return a String of the json response after being mapped, or an error message if the objectMapper fails
-     */
-//    public String jsonFormatter(Object objectToMap) {
-//        String responseJSON = "";
-//        try {
-//            responseJSON = objectMapper.writeValueAsString(objectToMap);
-//        } catch (Exception e) {
-//            logger.error("", e);
-//            responseJSON = "Object mapping failed.";
-//        }
-//
-//        return responseJSON;
-//
-//    }
-
-    /**
      * If a user exists in AWS, but not in the database, the user should be created, which is done in this method.
      *
      * @param username the username, processed out of the original jwt, of the user to create

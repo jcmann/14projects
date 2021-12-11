@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jenmann.entity.Characters;
 import com.jenmann.persistence.GenericDao;
+import com.jenmann.util.APIFormatUtility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,6 +39,11 @@ public class CharacterAPI {
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     /**
+     * A utility to standardize how objects are mapped in the API. Handles object mapping.
+     */
+    private APIFormatUtility formatUtility = new APIFormatUtility();
+
+    /**
      * Sends a response containing a JSON array of all characters stored in DMBook currently.
      *
      * @return all characters, sent as a JSON array
@@ -48,14 +54,16 @@ public class CharacterAPI {
         logger.info("Received request to getAllCharacters() in CharacterAPI.");
         List<Characters> allCharacters = getDao().getAll();
         String responseJSON = "";
+        int statusCode = 0;
 
         try {
-            responseJSON = getObjectMapper().writeValueAsString(allCharacters);
+            responseJSON = formatUtility.jsonFormatter(allCharacters);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } catch (Exception e) {
             logger.error("", e);
         }
 
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
@@ -72,14 +80,16 @@ public class CharacterAPI {
         logger.info("Received request to getCharacterByID() in CharacterAPI.");
         Characters character = (Characters) getDao().getById(id);
         String responseJSON = "";
+        int statusCode = 0;
 
         try {
-            responseJSON = getObjectMapper().writeValueAsString(character);
+            responseJSON = formatUtility.jsonFormatter(character);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } catch (Exception e) {
             logger.error("", e);
         }
 
-        return Response.status(200).entity(responseJSON).build();
+        return Response.status(statusCode).entity(responseJSON).build();
 
     }
 
