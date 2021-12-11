@@ -45,4 +45,14 @@ public class APIFormatUtility {
 
     }
 
+    /**
+     * This helper method updates the status code in the event the object mapping process failed.
+     *
+     * @param responseJSON the objectMapper's produced String, which will either be a valid object or a fail text
+     * @return the status code as an integer
+     */
+    public int determineStatusCode(String responseJSON) {
+        return (responseJSON.equals("Object mapping failed.")) ? 404 : 200;
+    }
+
 }

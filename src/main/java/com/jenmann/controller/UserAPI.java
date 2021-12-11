@@ -140,27 +140,8 @@ public class UserAPI implements PropertiesLoader {
      * @param responseJSON the objectMapper's produced String, which will either be a valid object or a fail text
      * @return the status code as an integer
      */
-    public int determineStatusCode(String responseJSON) {
-        return (responseJSON.equals("Object mapping failed.")) ? 404 : 200;
-    }
-
-    /**
-     * This method is used to turn any passed in object into stringified JSON using the object mapper.
-     *
-     * @param objectToMap any object that needs to be run through the objectmapper
-     * @return a String of the json response after being mapped, or an error message if the objectMapper fails
-     */
-//    public String jsonFormatter(Object objectToMap) {
-//        String responseJSON = "";
-//        try {
-//            responseJSON = objectMapper.writeValueAsString(objectToMap);
-//        } catch (Exception e) {
-//            logger.error("", e);
-//            responseJSON = "Object mapping failed.";
-//        }
-//
-//        return responseJSON;
-//
+//    public int determineStatusCode(String responseJSON) {
+//        return (responseJSON.equals("Object mapping failed.")) ? 404 : 200;
 //    }
 
     /**
@@ -214,7 +195,7 @@ public class UserAPI implements PropertiesLoader {
 
             // send this to the objectMapper
             responseJSON = formatUtility.jsonFormatter(userData);
-            statusCode = determineStatusCode(responseJSON);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } else {
             // send an error
             responseJSON = "The user was not found.";
@@ -245,7 +226,7 @@ public class UserAPI implements PropertiesLoader {
         if (user != null) {
             List<Encounter> encounters = encounterDao.getByUser(user);
             responseJSON = formatUtility.jsonFormatter(encounters);
-            statusCode = determineStatusCode(responseJSON);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } else {
             responseJSON = "The user was not found";
             statusCode = 404;
@@ -288,7 +269,7 @@ public class UserAPI implements PropertiesLoader {
             encounter.setId(newEncounterID); // reformat to return
 
             responseJSON = formatUtility.jsonFormatter(encounter);
-            statusCode = determineStatusCode(responseJSON);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
 
         } else {
             responseJSON = "The user was not found";
@@ -409,7 +390,7 @@ public class UserAPI implements PropertiesLoader {
         if (user != null) {
             List<Characters> characters = charactersDao.getByUser(user);
             responseJSON = formatUtility.jsonFormatter(characters);
-            statusCode = determineStatusCode(responseJSON);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
         } else {
             responseJSON = "The user was not found";
             statusCode = 404;
@@ -451,7 +432,7 @@ public class UserAPI implements PropertiesLoader {
             character.setId(newEncounterID); // reformat to return
 
             responseJSON = formatUtility.jsonFormatter(character);
-            statusCode = determineStatusCode(responseJSON);
+            statusCode = formatUtility.determineStatusCode(responseJSON);
 
         } else {
             responseJSON = "The user was not found";
