@@ -110,20 +110,24 @@ public class UserAPI implements PropertiesLoader {
      * @return null if the user was not found, or a user object if a user was found
      */
     public User userFetcher (String jwt) {
+        logger.info("In the userFetcher.");
         String username = processJWT(jwt);
         User user = null;
 
         if (username != null) {
             // this means the JWT was valid so the user should be in the database
+            logger.info("JWT was validated.");
             user = dao.getByUsername(username);
 
             if (user == null) {
                 // This means the user's db record was not created yet, so fix that
+                logger.info("User was not found in the database, creating new user record.");
                 user = createNewUser(username);
             }
         }
 
         // After all that, the user will be validated + in the db, or null if they don't exist
+        logger.info("Returning user: " + user);
         return user;
     }
 
@@ -163,9 +167,11 @@ public class UserAPI implements PropertiesLoader {
      * @return the User object created
      */
     public User createNewUser(String username) {
+        logger.info("Currently creating new user...");
         User newUser = new User();
         newUser.setUsername(username);
         int newUserID = dao.insert(newUser);
+        logger.info("New user ID: " + newUserID);
         return newUser;
     }
 
@@ -182,6 +188,7 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/all")
     @Produces("application/json")
     public Response getAllUserData(@PathParam("jwt") String jwt) {
+        logger.info("Received request to getAllUserData() in User API.");
         String responseJSON = "";
         int statusCode = 0;
         User user = null;
@@ -226,6 +233,7 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/encounters")
     @Produces("application/json")
     public Response getUserEncounters(@PathParam("jwt") String jwt) {
+        logger.info("Received request to getUserEncounters() in User API.");
         String responseJSON = "";
         int statusCode = 0;
         User user = null;
@@ -256,6 +264,8 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/encounters")
     @Consumes("application/json")
     public Response addNewEncounter(@PathParam("jwt") String jwt,  String body) {
+        logger.info("Received request to addNewEncounter() in User API.");
+        logger.debug("Body received: " + body);
         String responseJSON = "";
         int statusCode = 0;
         User user = null;
@@ -297,6 +307,9 @@ public class UserAPI implements PropertiesLoader {
     @PUT
     @Path("{jwt}/encounters/{idToUpdate}")
     public Response editEncounter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
+        logger.info("Received request to editEncounter() in User API.");
+        logger.debug("ID received: " + idToUpdate);
+        logger.debug("Body received: " + body);
         String responseJSON = "";
         int statusCode = 0;
         User user = userFetcher(jwt);
@@ -339,6 +352,8 @@ public class UserAPI implements PropertiesLoader {
     @DELETE
     @Path("{jwt}/encounters/{id}")
     public Response deleteEncounterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+        logger.info("Received request to deleteEncounterByID() in User API.");
+        logger.debug("ID received: " + idToDelete);
         String responseJSON = "";
         int statusCode = 0;
         User user = userFetcher(jwt);
@@ -382,6 +397,7 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/characters")
     @Produces("application/json")
     public Response getUserCharacters(@PathParam("jwt") String jwt) {
+        logger.info("Received request to getUserCharacters() in User API.");
         String responseJSON = "";
         int statusCode = 0;
         User user = null;
@@ -411,6 +427,8 @@ public class UserAPI implements PropertiesLoader {
     @Path("{jwt}/characters")
     @Consumes("application/json")
     public Response addNewCharacter(@PathParam("jwt") String jwt,  String body) {
+        logger.info("Received request to addNewCharacter() in User API.");
+        logger.debug("Body received: " + body);
         String responseJSON = "";
         int statusCode = 0;
         User user = null;
@@ -451,6 +469,9 @@ public class UserAPI implements PropertiesLoader {
     @PUT
     @Path("{jwt}/characters/{idToUpdate}")
     public Response editCharacter(@PathParam("jwt") String jwt, @PathParam("idToUpdate") int idToUpdate, String body) {
+        logger.info("Received request to editCharacter() in User API.");
+        logger.debug("ID received: " + idToUpdate);
+        logger.debug("Body received: " + body);
         String responseJSON = "";
         int statusCode = 0;
         User user = userFetcher(jwt);
@@ -491,6 +512,8 @@ public class UserAPI implements PropertiesLoader {
     @DELETE
     @Path("{jwt}/characters/{id}")
     public Response deleteCharacterByID(@PathParam("jwt") String jwt, @PathParam("id") int idToDelete) {
+        logger.info("Received request to deleteCharacterByID() in User API.");
+        logger.debug("ID received: " + idToDelete);
         String responseJSON = "";
         int statusCode = 0;
         User user = userFetcher(jwt);

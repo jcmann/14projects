@@ -45,6 +45,7 @@ public class CharacterAPI {
     @GET
     @Produces("application/json")
     public Response getAllCharacters() {
+        logger.info("Received request to getAllCharacters() in CharacterAPI.");
         List<Characters> allCharacters = getDao().getAll();
         String responseJSON = "";
 
@@ -68,7 +69,7 @@ public class CharacterAPI {
     @Path("{id}")
     @Produces("application/json")
     public Response getCharacterByID(@PathParam("id") int id) {
-
+        logger.info("Received request to getCharacterByID() in CharacterAPI.");
         Characters character = (Characters) getDao().getById(id);
         String responseJSON = "";
 

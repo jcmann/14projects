@@ -45,6 +45,7 @@ public class EncounterAPI {
     @GET
     @Produces("application/json")
     public Response getAllEncounters() {
+        logger.info("Received request to getAllEncounters() in Encounter API.");
         List<Encounter> allCharacters = dao.getAll();
         String responseJSON = "";
 
@@ -67,6 +68,7 @@ public class EncounterAPI {
     @Path("{id}")
     @Produces("application/json")
     public Response getEncounterByID(@PathParam("id") int id) {
+        logger.info("Received request to getEncounterByID() in Encounter API.");
         Encounter encounter = (Encounter) getDao().getById(id);
         String responseJSON = "";
 

@@ -51,6 +51,7 @@ public class MonsterAPI {
     @GET
     @Produces("application/json")
     public Response getAllMonsters() {
+        logger.info("Received request to getAllMonsters() in Monster API.");
         GetAllResponse allMonsters = getDao().getAllMonsters();
         String responseJSON = "";
 
@@ -76,6 +77,7 @@ public class MonsterAPI {
     @Path("{index}")
     @Produces("application/json")
     public Response getMonsterByIndex(@PathParam("index") String index) {
+        logger.info("Received request to getMonsterByIndex() in Monster API.");
         Monster monster = getDao().getMonsterByIndex(index);
         String responseJSON = "";
         try {
