@@ -24,7 +24,7 @@ public class APIFormatUtility <T> {
     /**
      * Log4J2 instance for all logging.
      */
-    private final Logger logger = LogManager.getLogger(this.type.getClass()); // TODO fix logging
+    private final Logger logger = LogManager.getLogger(this.type.getClass());
 
     public APIFormatUtility(Class<T> type) {
         this.type = type;
@@ -38,7 +38,7 @@ public class APIFormatUtility <T> {
         try {
             responseJSON = objectMapper.writeValueAsString(entity);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return responseJSON;
@@ -51,7 +51,7 @@ public class APIFormatUtility <T> {
         try {
             responseJSON = objectMapper.writeValueAsString(listOfEntities);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return responseJSON;

@@ -57,7 +57,7 @@ public class MonsterAPI {
         try {
             responseJSON = getObjectMapper().writeValueAsString(allMonsters.getResults());
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return Response.status(200).entity(responseJSON).build();
