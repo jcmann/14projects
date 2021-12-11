@@ -556,7 +556,7 @@ public class UserAPI implements PropertiesLoader {
     /**
      * This method takes in a JWT ID Token, intended to be received from SPA frontend client. It handles the
      * parsing and validation of the JWT. If the validation is successful, it will return the username of the
-     * validated user. If it is unsuccessful, the backend currently catches an exception. This is a // TODO as well.
+     * validated user. If it is unsuccessful, the backend currently catches an exception.
      *
      * @param jwtString a JWT ID Token from AWS Cognito
      * @return if user is validated and logged in, will return a username.
