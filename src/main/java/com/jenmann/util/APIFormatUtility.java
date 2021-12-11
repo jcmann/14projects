@@ -38,7 +38,7 @@ public class APIFormatUtility <T> {
         try {
             responseJSON = objectMapper.writeValueAsString(entity);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return responseJSON;
@@ -51,7 +51,7 @@ public class APIFormatUtility <T> {
         try {
             responseJSON = objectMapper.writeValueAsString(listOfEntities);
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
+            logger.error("", e);
         }
 
         return responseJSON;
