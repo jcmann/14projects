@@ -12,9 +12,8 @@ import java.util.List;
  *
  * @author jcmann
  */
-public class APIFormatUtility <T> {
+public class APIFormatUtility {
 
-    private Class<T> type;
 
     /**
      * A utility object, used for mapping POJOs to JSON strings here.
@@ -24,37 +23,26 @@ public class APIFormatUtility <T> {
     /**
      * Log4J2 instance for all logging.
      */
-    private final Logger logger = LogManager.getLogger(this.type.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
-    public APIFormatUtility(Class<T> type) {
-        this.type = type;
-    }
-
-    // TODO this is a stretch goal for cleaner code!
-    public String jsonFormatHelper(T entity) {
-        logger.info("In singular format helper");
+    /**
+     * This method is used to turn any passed in object into stringified JSON using the object mapper. Because
+     * it expects an Object typed parameter, it handles both collections and individual entities.
+     *
+     * @param objectToMap any object that needs to be run through the objectmapper
+     * @return a String of the json response after being mapped, or an error message if the objectMapper fails
+     */
+    public String jsonFormatter(Object objectToMap) {
         String responseJSON = "";
-
         try {
-            responseJSON = objectMapper.writeValueAsString(entity);
+            responseJSON = objectMapper.writeValueAsString(objectToMap);
         } catch (Exception e) {
             logger.error("", e);
+            responseJSON = "Object mapping failed.";
         }
 
         return responseJSON;
-    }
 
-    public String jsonFormatHelper(List<T> listOfEntities) {
-        logger.info("In List format helper");
-        String responseJSON = "";
-
-        try {
-            responseJSON = objectMapper.writeValueAsString(listOfEntities);
-        } catch (Exception e) {
-            logger.error("", e);
-        }
-
-        return responseJSON;
     }
 
 }
