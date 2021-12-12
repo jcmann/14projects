@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 /**
  * The Characters class is really supposed to be the Character class, but Character is also a significant type in Java,
- * so I made this classname plural. Each instance represents an individual Dungeons & Dragons character. One user
+ * so I made this classname plural. Each instance represents an individual Dungeons and Dragons character. One user
  * can have many characters.
  *
  * @author jcmann
