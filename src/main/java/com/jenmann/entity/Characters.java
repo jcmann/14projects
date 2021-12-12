@@ -2,10 +2,7 @@ package com.jenmann.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * The Characters class is really supposed to be the Character class, but Character is also a significant type in Java,
@@ -288,7 +285,6 @@ public class Characters {
      * Gets the user to whom these characters belong
      *
      * @param user the user
-     * @return the user
      */
     public void setUser(User user) {
         this.user = user;

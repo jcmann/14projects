@@ -59,17 +59,6 @@ public class User {
     }
 
     /**
-     * Instantiates a new User.
-     *
-     * @param id       the id
-     * @param username the username
-     */
-    public User(int id, String username, String password) {
-        this.id = id;
-        this.username = username;
-    }
-
-    /**
      * Gets id.
      *
      * @return the id

@@ -2,11 +2,7 @@ package com.jenmann.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The Encounter class represents a singular planned encounter in a Dungeons and Dragons game. An encounter is usually
@@ -60,9 +56,6 @@ public class Encounter {
     )
     @JsonIgnore
     private User user;
-
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "characterEncounters")
-//    private Set<Characters> encounterCharacters = new HashSet<Characters>(0);
 
     /**
      * No arg constructor.

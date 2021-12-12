@@ -51,6 +51,34 @@ public class Monster {
     private int hitPoints;
 
     /**
+     * Generic no-arg constructor
+     */
+    public Monster() {
+    }
+
+    /**
+     * Constructs a Monster entity with all instance variables. This would be commonly used because the API
+     * should, hypothetically, return all this data.
+     *
+     * @param index lower snake case index
+     * @param name monster name
+     * @param size 5e-type size category
+     * @param alignment chaotic/lawful good/evil
+     * @param armorClass integer armor class
+     * @param hitPoints maximum health points
+     * @param hitDice monster's hit dice
+     */
+    public Monster(String index, String name, String size, String alignment, int armorClass, int hitPoints, String hitDice) {
+        this.index = index;
+        this.name = name;
+        this.size = size;
+        this.alignment = alignment;
+        this.armorClass = armorClass;
+        this.hitPoints = hitPoints;
+        this.hitDice = hitDice;
+    }
+
+    /**
      * The hit dice used by the monster in its attacks
      */
     @JsonProperty("hit_dice")

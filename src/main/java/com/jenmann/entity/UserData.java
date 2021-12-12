@@ -25,6 +25,25 @@ public class UserData {
     private List<GetAllResponseItem> monsters;
 
     /**
+     * Default no-arg constructor
+     */
+    public UserData() {
+    }
+
+    /**
+     * Instantiates a new UserData object with all instance variables
+     *
+     * @param characters the characters belonging to the user
+     * @param encounters the encounters belonging to the user
+     * @param monsters   all monsters provided by the DND 5e API
+     */
+    public UserData(List<Characters> characters, List<Encounter> encounters, List<GetAllResponseItem> monsters) {
+        this.characters = characters;
+        this.encounters = encounters;
+        this.monsters = monsters;
+    }
+
+    /**
      * Gets characters.
      *
      * @return the characters
