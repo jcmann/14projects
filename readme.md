@@ -28,6 +28,11 @@ especially, but that can also help just during regular non-combat gameplay.
 All of this revolves around information tracking and display and I believe the
 most important part is a good UI.
 
+## Demo/Presentation
+
+[YouTube Link](https://youtu.be/5Tl_DR9d3Wk)
+
+
 ## User Stories
 
 ### Minimum Viable Product
@@ -35,12 +40,11 @@ most important part is a good UI.
 - [X] As a Dungeon Master, I want to be able to create an account that saves my information in a database, and not just local browser storage, so my data persists across logins.
 - [X] As a DM, I should be able to sign in and sign out of my account, and my data
       should persist across these logins.
-- [ ] As a DM, I want to be able to create, modify, and delete
+- [X] As a DM, I want to be able to create, modify, and delete
       various encounters from my saved list of encounters.
 - [ ] As a DM writing an encounter, I should be able to add characters and monsters to the encounter so that I can track the difficulty of said encounter.
-- [ ] As a DM writing an encounter, I should be able to calculate the difficulty rating of an encounter based on character and monster levels.
-- [ ] As a DM writing an encounter, I should be able to write a long text description of the encounter so I can store all the information that doesn't conveniently boil down into characters and monsters.
-- [ ] As a DM, I should be able to track (add, modify, and delete) player characters. Specifically, I need their current health, armor class, primary stats, and hit dice.
+- [X] As a DM writing an encounter, I should be able to write a long text description of the encounter so I can store all the information that doesn't conveniently boil down into characters and monsters.
+- [X] As a DM, I should be able to track (add, modify, and delete) player characters. Specifically, I need their current health, armor class, primary stats, and hit dice.
 
 ### Stretch Goals
 
